@@ -1,20 +1,20 @@
-[
 {
-"modid": "Calculator",
-"name": "Calculator",
-"description": "Whoever said Calculators were boring?! Awesome Calculators, crazy items, mind-blowing machines and hundreds of hidden recipes. 
-Change the way you craft, change the way you play, change the way you think. 
-
-Thank you for trying Calculator!",
-"version": "${version}",
-"mcversion": "${mcversion}",
-"updateUrl": "http://minecraft.curseforge.com/mc-mods/225104-calculator/files/latest",
-"authors": ["Ollie Lansdell"],
-"credits": "Created by Ollie Lansdell",
-"logoFile": "logo_calculator.png",
-"screenshots": [],
-"requiredMods": [ "Forge", "SonarCore" ],
-"dependencies": ["Agricraft"],
-"useDependencyInformation": true
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Whoever said Calculators were boring?! Awesome Calculators, crazy items, mind-blowing machines and hundreds of hidden recipes. Change the way you craft, change the way you play, change the way you think. Thank you for trying Calculator!",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "https://www.curseforge.com/minecraft/mc-mods/calculator",
+		"updateUrl": "https://www.curseforge.com/minecraft/mc-mods/calculator/files/latest",
+		"authorList": ["Ollie Lansdell"],
+		"credits": "Created by Ollie Lansdell",
+		"logoFile": "logo_calculator.png",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": ["SonarCore"],
+		"dependencies": ["SonarCore"],
+		"useDependencyInformation": true
+	}]
 }
-]

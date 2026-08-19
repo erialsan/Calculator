@@ -12,36 +12,41 @@ import sonar.calculator.mod.common.tileentity.misc.TileEntityGasLantern;
 import sonar.core.helpers.FontHelper;
 
 public class GuiGasLantern extends GuiContainer {
-	public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/guicalculatorplug.png");
 
-	public TileEntityGasLantern entity;
+    public static final ResourceLocation bground = new ResourceLocation(
+        "Calculator:textures/gui/guicalculatorplug.png");
 
-	public GuiGasLantern(InventoryPlayer inventoryPlayer, TileEntityGasLantern entity) {
-		super(new ContainerLantern(inventoryPlayer, entity));
+    public TileEntityGasLantern entity;
 
-		this.entity = entity;
+    public GuiGasLantern(InventoryPlayer inventoryPlayer, TileEntityGasLantern entity) {
+        super(new ContainerLantern(inventoryPlayer, entity));
 
-		this.xSize = 176;
-		this.ySize = 166;
-	}
+        this.entity = entity;
 
-	@Override
-	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-		FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
-		if (entity.burnTime.getObject() > 0 && entity.maxBurnTime.getObject() != 0) {
-			String burn = FontHelper.translate("co2.burnt") + ": " + entity.burnTime.getObject() * 100 / entity.maxBurnTime.getObject();
-			FontHelper.textCentre(burn, xSize, 60, 0);
-		} else {
-			String burn = FontHelper.translate("co2.burning");
-			FontHelper.textCentre(burn, xSize, 60, 0);
-		}
-	}
+        this.xSize = 176;
+        this.ySize = 166;
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+    @Override
+    public void drawGuiContainerForegroundLayer(int par1, int par2) {
+        FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
+        if (entity.burnTime.getObject() > 0 && entity.maxBurnTime.getObject() != 0) {
+            String burn = FontHelper.translate("co2.burnt") + ": "
+                + entity.burnTime.getObject() * 100 / entity.maxBurnTime.getObject();
+            FontHelper.textCentre(burn, xSize, 60, 0);
+        } else {
+            String burn = FontHelper.translate("co2.burning");
+            FontHelper.textCentre(burn, xSize, 60, 0);
+        }
+    }
 
-		Minecraft.getMinecraft().getTextureManager().bindTexture(bground);
-		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(bground);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
 }

@@ -4,80 +4,82 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import sonar.calculator.mod.api.nutrition.IHealthStore;
 import sonar.calculator.mod.api.nutrition.IHungerStore;
 import sonar.calculator.mod.common.tileentity.machines.TileEntityAssimilator;
 import sonar.core.inventory.ContainerSync;
 
 public class ContainerAssimilator extends ContainerSync {
-	private TileEntityAssimilator entity;
 
-	public ContainerAssimilator(InventoryPlayer inventory, TileEntityAssimilator entity) {
-		super(entity);
-		this.entity = entity;
+    private TileEntityAssimilator entity;
 
-		addSlotToContainer(new Slot(entity, 0, 80, 34));
+    public ContainerAssimilator(InventoryPlayer inventory, TileEntityAssimilator entity) {
+        super(entity);
+        this.entity = entity;
 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
+        addSlotToContainer(new Slot(entity, 0, 80, 34));
 
-		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 142));
-		}
-	}
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
-		ItemStack itemstack = null;
-		Slot slot = (Slot) this.inventorySlots.get(slotID);
+        for (int i = 0; i < 9; i++) {
+            addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 142));
+        }
+    }
 
-		if ((slot != null) && (slot.getHasStack())) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
+        ItemStack itemstack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotID);
 
-			if ((slotID != 0)) {
-				if (itemstack1.getItem() instanceof IHungerStore || itemstack1.getItem() instanceof IHealthStore) {
-					if (!mergeItemStack(itemstack1, 0, 1, false)) {
+        if ((slot != null) && (slot.getHasStack())) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
-						return null;
-					}
+            if ((slotID != 0)) {
+                if (itemstack1.getItem() instanceof IHungerStore || itemstack1.getItem() instanceof IHealthStore) {
+                    if (!mergeItemStack(itemstack1, 0, 1, false)) {
 
-				} else if ((slotID >= 1) && (slotID < 28)) {
-					if (!mergeItemStack(itemstack1, 28, 37, false)) {
-						return null;
-					}
-				} else if ((slotID >= 28) && (slotID < 37) && (!mergeItemStack(itemstack1, 1, 28, false))) {
-					return null;
-				}
-			} else if (!mergeItemStack(itemstack1, 1, 37, false)) {
-				return null;
-			}
+                        return null;
+                    }
 
-			if (itemstack1.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
-			}
+                } else if ((slotID >= 1) && (slotID < 28)) {
+                    if (!mergeItemStack(itemstack1, 28, 37, false)) {
+                        return null;
+                    }
+                } else if ((slotID >= 28) && (slotID < 37) && (!mergeItemStack(itemstack1, 1, 28, false))) {
+                    return null;
+                }
+            } else if (!mergeItemStack(itemstack1, 1, 37, false)) {
+                return null;
+            }
 
-			if (itemstack1.stackSize == itemstack.stackSize) {
-				return null;
-			}
+            if (itemstack1.stackSize == 0) {
+                slot.putStack((ItemStack) null);
+            } else {
+                slot.onSlotChanged();
+            }
 
-			slot.onPickupFromSlot(player, itemstack1);
-		}
-		return itemstack;
-	}
+            if (itemstack1.stackSize == itemstack.stackSize) {
+                return null;
+            }
 
-	@Override
-	public ItemStack slotClick(int par, int par1, int par2, EntityPlayer player) {
-		return super.slotClick(par, par1, par2, player);
-	}
+            slot.onPickupFromSlot(player, itemstack1);
+        }
+        return itemstack;
+    }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return entity.isUseableByPlayer(player);
-	}
+    @Override
+    public ItemStack slotClick(int par, int par1, int par2, EntityPlayer player) {
+        return super.slotClick(par, par1, par2, player);
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return entity.isUseableByPlayer(player);
+    }
 }

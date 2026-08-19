@@ -8,80 +8,84 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import sonar.calculator.mod.CalculatorConfig;
-import sonar.calculator.mod.api.CalculatorAPI;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import sonar.calculator.mod.CalculatorConfig;
+import sonar.calculator.mod.api.CalculatorAPI;
 
 /** Uses the config BlackList file to create a Map which can be easily accessed */
 public class AtomicMultiplierBlacklist {
-	private static final AtomicMultiplierBlacklist blacklist = new AtomicMultiplierBlacklist();
 
-	private Map bannedList = new HashMap();
+    private static final AtomicMultiplierBlacklist blacklist = new AtomicMultiplierBlacklist();
 
-	public static AtomicMultiplierBlacklist blacklist() {
-		return blacklist;
-	}
+    private Map bannedList = new HashMap();
 
-	public AtomicMultiplierBlacklist() {
-		String[] blacklisted = CalculatorConfig.atomicblackList.getStringList();
-		for (int i = 0; i < blacklisted.length; i++) {
-			String[] parts = blacklisted[i].split(":");
-			Item itemBan = GameRegistry.findItem(parts[0], parts[1]);
-			if (itemBan != null) {
-				this.addBan(itemBan);
-			} else {
-				Block blockBan = GameRegistry.findBlock(parts[0], parts[1]);
-				if (blockBan != null) {
-					this.addBan(blockBan);
-				}
-			}
-		}
-		List<UniqueIdentifier> apiBlocked = CalculatorAPI.getItemBlackList();
-		for (UniqueIdentifier item : apiBlocked) {
-			if (GameRegistry.findItem(item.modId, item.name) != null) {
-				this.addBan(GameRegistry.findItem(item.modId, item.name));
-			} else if (GameRegistry.findBlock(item.modId, item.name) != null) {
-				this.addBan(GameRegistry.findBlock(item.modId, item.name));
-			}
-		}
-	}
+    public static AtomicMultiplierBlacklist blacklist() {
+        return blacklist;
+    }
 
-	public void addBan(Block input) {
-		addBan(Item.getItemFromBlock(input));
-	}
+    public AtomicMultiplierBlacklist() {
+        String[] blacklisted = CalculatorConfig.atomicblackList.getStringList();
+        for (int i = 0; i < blacklisted.length; i++) {
+            String[] parts = blacklisted[i].split(":");
+            Item itemBan = GameRegistry.findItem(parts[0], parts[1]);
+            if (itemBan != null) {
+                this.addBan(itemBan);
+            } else {
+                Block blockBan = GameRegistry.findBlock(parts[0], parts[1]);
+                if (blockBan != null) {
+                    this.addBan(blockBan);
+                }
+            }
+        }
+        List<UniqueIdentifier> apiBlocked = CalculatorAPI.getItemBlackList();
+        for (UniqueIdentifier item : apiBlocked) {
+            if (GameRegistry.findItem(item.modId, item.name) != null) {
+                this.addBan(GameRegistry.findItem(item.modId, item.name));
+            } else if (GameRegistry.findBlock(item.modId, item.name) != null) {
+                this.addBan(GameRegistry.findBlock(item.modId, item.name));
+            }
+        }
+    }
 
-	public void addBan(Item input) {
-		this.bannedList.put(input, false);
-	}
+    public void addBan(Block input) {
+        addBan(Item.getItemFromBlock(input));
+    }
 
-	public boolean isAllowed(Item item) {
-		List<String> apiBlocked = CalculatorAPI.getModBlackList();
-		for (String modid : apiBlocked) {
-			if (GameRegistry.findUniqueIdentifierFor(item).modId.equals(modid)) {
-				return false;
-			}
-		}
-		Iterator iterator = this.bannedList.entrySet().iterator();
+    public void addBan(Item input) {
+        this.bannedList.put(input, false);
+    }
 
-		Map.Entry entry;
-		do {
-			if (!iterator.hasNext()) {
-				return true;
-			}
+    public boolean isAllowed(Item item) {
+        List<String> apiBlocked = CalculatorAPI.getModBlackList();
+        for (String modid : apiBlocked) {
+            if (GameRegistry.findUniqueIdentifierFor(item).modId.equals(modid)) {
+                return false;
+            }
+        }
+        Iterator iterator = this.bannedList.entrySet()
+            .iterator();
 
-			entry = (Map.Entry) iterator.next();
-		} while (!(item == (Item) entry.getKey()));
+        Map.Entry entry;
+        do {
+            if (!iterator.hasNext()) {
+                return true;
+            }
 
-		return (Boolean) entry.getValue();
-	}
+            entry = (Map.Entry) iterator.next();
+        } while (!(item == (Item) entry.getKey()));
 
-	private boolean func_151397_a(ItemStack p_151397_1_, ItemStack p_151397_2_) {
-		return (p_151397_2_.getItem() == p_151397_1_.getItem()) && ((p_151397_2_.getItemDamage() == 32767) || (p_151397_2_.getItemDamage() == p_151397_1_.getItemDamage()));
-	}
+        return (Boolean) entry.getValue();
+    }
 
-	public Map getSmeltingList() {
-		return this.bannedList;
-	}
+    private boolean func_151397_a(ItemStack p_151397_1_, ItemStack p_151397_2_) {
+        return (p_151397_2_.getItem() == p_151397_1_.getItem())
+            && ((p_151397_2_.getItemDamage() == 32767) || (p_151397_2_.getItemDamage() == p_151397_1_.getItemDamage()));
+    }
+
+    public Map getSmeltingList() {
+        return this.bannedList;
+    }
 
 }

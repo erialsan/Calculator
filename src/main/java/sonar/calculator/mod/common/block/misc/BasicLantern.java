@@ -18,152 +18,208 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.block.IDismantleable;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.misc.TileEntityBasicLantern;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.helpers.SonarHelper;
-import cofh.api.block.IDismantleable;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BasicLantern extends BlockContainer implements IDismantleable {
 
-	@SideOnly(Side.CLIENT)
-	private IIcon icon;
+    @SideOnly(Side.CLIENT)
+    private IIcon icon;
 
-	public BasicLantern() {
-		super(SonarMaterials.machine);
-	}
+    public BasicLantern() {
+        super(SonarMaterials.machine);
+    }
 
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
+    @Override
+    public int getRenderType() {
+        return -1;
+    }
 
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister register) {
-		this.icon = register.registerIcon("Calculator:reinforcedstone");
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister register) {
+        this.icon = register.registerIcon("Calculator:reinforcedstone");
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int p_149691_1_, int p_149691_2_) {
-		return this.icon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int p_149691_1_, int p_149691_2_) {
+        return this.icon;
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityplayer, ItemStack itemstack) {
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityplayer, ItemStack itemstack) {
 
-		Block north = world.getBlock(x + (ForgeDirection.NORTH.offsetX), y, z + (ForgeDirection.NORTH.offsetZ));
-		Block south = world.getBlock(x + (ForgeDirection.SOUTH.offsetX), y, z + (ForgeDirection.SOUTH.offsetZ));
-		Block east = world.getBlock(x + (ForgeDirection.EAST.offsetX), y, z + (ForgeDirection.EAST.offsetZ));
-		Block west = world.getBlock(x + (ForgeDirection.WEST.offsetX), y, z + (ForgeDirection.WEST.offsetZ));
-		Block down = world.getBlock(x, y - 1, z);
+        Block north = world.getBlock(x + (ForgeDirection.NORTH.offsetX), y, z + (ForgeDirection.NORTH.offsetZ));
+        Block south = world.getBlock(x + (ForgeDirection.SOUTH.offsetX), y, z + (ForgeDirection.SOUTH.offsetZ));
+        Block east = world.getBlock(x + (ForgeDirection.EAST.offsetX), y, z + (ForgeDirection.EAST.offsetZ));
+        Block west = world.getBlock(x + (ForgeDirection.WEST.offsetX), y, z + (ForgeDirection.WEST.offsetZ));
+        Block down = world.getBlock(x, y - 1, z);
 
-		if (down != null && down.getMaterial().isSolid() && down != Calculator.gas_lantern_on && down != Calculator.gas_lantern_off && down != Calculator.basic_lantern) {
-			world.setBlockMetadataWithNotify(x, y, z, 0, 2);
+        if (down != null && down.getMaterial()
+            .isSolid()
+            && down != Calculator.gas_lantern_on
+            && down != Calculator.gas_lantern_off
+            && down != Calculator.basic_lantern) {
+            world.setBlockMetadataWithNotify(x, y, z, 0, 2);
 
-		} else if (north != null && north.getMaterial().isSolid() && north != Calculator.gas_lantern_on && north != Calculator.gas_lantern_off
+        } else if (north != null && north.getMaterial()
+            .isSolid()
+            && north != Calculator.gas_lantern_on
+            && north != Calculator.gas_lantern_off
 
-		&& north != Calculator.basic_lantern && world.isSideSolid(x + (ForgeDirection.NORTH.offsetX), y, z + (ForgeDirection.NORTH.offsetZ), ForgeDirection.NORTH)) {
-			world.setBlockMetadataWithNotify(x, y, z, 3, 2);
+            && north != Calculator.basic_lantern
+            && world.isSideSolid(
+                x + (ForgeDirection.NORTH.offsetX),
+                y,
+                z + (ForgeDirection.NORTH.offsetZ),
+                ForgeDirection.NORTH)) {
+                    world.setBlockMetadataWithNotify(x, y, z, 3, 2);
 
-		} else if (south != null && south.getMaterial().isSolid() && south != Calculator.gas_lantern_on && south != Calculator.gas_lantern_off
+                } else
+            if (south != null && south.getMaterial()
+                .isSolid()
+                && south != Calculator.gas_lantern_on
+                && south != Calculator.gas_lantern_off
 
-		&& south != Calculator.basic_lantern && world.isSideSolid(x + (ForgeDirection.SOUTH.offsetX), y, z + (ForgeDirection.SOUTH.offsetZ), ForgeDirection.SOUTH)) {
-			world.setBlockMetadataWithNotify(x, y, z, 2, 2);
+                && south != Calculator.basic_lantern
+                && world.isSideSolid(
+                    x + (ForgeDirection.SOUTH.offsetX),
+                    y,
+                    z + (ForgeDirection.SOUTH.offsetZ),
+                    ForgeDirection.SOUTH)) {
+                        world.setBlockMetadataWithNotify(x, y, z, 2, 2);
 
-		} else if (east != null && east.getMaterial().isSolid() && east != Calculator.gas_lantern_on && east != Calculator.gas_lantern_off
+                    } else
+                if (east != null && east.getMaterial()
+                    .isSolid()
+                    && east != Calculator.gas_lantern_on
+                    && east != Calculator.gas_lantern_off
 
-		&& east != Calculator.basic_lantern && world.isSideSolid(x + (ForgeDirection.EAST.offsetX), y, z + (ForgeDirection.EAST.offsetZ), ForgeDirection.EAST)) {
-			world.setBlockMetadataWithNotify(x, y, z, 4, 2);
+                    && east != Calculator.basic_lantern
+                    && world.isSideSolid(
+                        x + (ForgeDirection.EAST.offsetX),
+                        y,
+                        z + (ForgeDirection.EAST.offsetZ),
+                        ForgeDirection.EAST)) {
+                            world.setBlockMetadataWithNotify(x, y, z, 4, 2);
 
-		} else if (west != null && west.getMaterial().isSolid() && west != Calculator.gas_lantern_on && west != Calculator.gas_lantern_off
+                        } else
+                    if (west != null && west.getMaterial()
+                        .isSolid()
+                        && west != Calculator.gas_lantern_on
+                        && west != Calculator.gas_lantern_off
 
-		&& west != Calculator.basic_lantern && world.isSideSolid(x + (ForgeDirection.WEST.offsetX), y, z + (ForgeDirection.WEST.offsetZ), ForgeDirection.WEST)) {
-			world.setBlockMetadataWithNotify(x, y, z, 5, 2);
-		}
+                        && west != Calculator.basic_lantern
+                        && world.isSideSolid(
+                            x + (ForgeDirection.WEST.offsetX),
+                            y,
+                            z + (ForgeDirection.WEST.offsetZ),
+                            ForgeDirection.WEST)) {
+                                world.setBlockMetadataWithNotify(x, y, z, 5, 2);
+                            }
 
-		else {
-			world.setBlockMetadataWithNotify(x, y, z, 0, 2);
+                    else {
+                        world.setBlockMetadataWithNotify(x, y, z, 0, 2);
 
-		}
+                    }
 
-	}
+    }
 
-	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		this.onBlockPlacedBy(world, x, y, z, null, null);
-	}
+    @Override
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+        this.onBlockPlacedBy(world, x, y, z, null, null);
+    }
 
-	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int metadata = world.getBlockMetadata(x, y, z);
-		ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z)).getOpposite();
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+        int metadata = world.getBlockMetadata(x, y, z);
+        ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z))
+            .getOpposite();
 
-		setBlockBounds(0.3F + (dir.offsetX * 0.32F), 0.0F + getY(metadata), 0.3F + (dir.offsetZ * 0.32F), 0.7F + (dir.offsetX * 0.32F), 0.7F + getY(metadata), 0.7F + (dir.offsetZ * 0.32F));
+        setBlockBounds(
+            0.3F + (dir.offsetX * 0.32F),
+            0.0F + getY(metadata),
+            0.3F + (dir.offsetZ * 0.32F),
+            0.7F + (dir.offsetX * 0.32F),
+            0.7F + getY(metadata),
+            0.7F + (dir.offsetZ * 0.32F));
 
-	}
+    }
 
-	@Override
-	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list, Entity entity) {
-		int metadata = world.getBlockMetadata(x, y, z);
-		ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z)).getOpposite();
+    @Override
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axis, List list,
+        Entity entity) {
+        int metadata = world.getBlockMetadata(x, y, z);
+        ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z))
+            .getOpposite();
 
-		this.setBlockBounds(0.3F + (dir.offsetX * 0.32F), 0.0F + getY(metadata), 0.3F + (dir.offsetZ * 0.32F), 0.7F + (dir.offsetX * 0.32F), 0.7F + getY(metadata), 0.7F + (dir.offsetZ * 0.32F));
-		super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
+        this.setBlockBounds(
+            0.3F + (dir.offsetX * 0.32F),
+            0.0F + getY(metadata),
+            0.3F + (dir.offsetZ * 0.32F),
+            0.7F + (dir.offsetX * 0.32F),
+            0.7F + getY(metadata),
+            0.7F + (dir.offsetZ * 0.32F));
+        super.addCollisionBoxesToList(world, x, y, z, axis, list, entity);
 
-	}
+    }
 
-	public float getY(int meta) {
-		if (meta == 0) {
-			return 0.0F;
-		} else {
-			return 0.1F;
-		}
-	}
+    public float getY(int meta) {
+        if (meta == 0) {
+            return 0.0F;
+        } else {
+            return 0.1F;
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World world, int x, int y, int z, Random random) {
-		float x1 = x + random.nextFloat();
-		float y1 = y + 0.5F;
-		float z1 = z + random.nextFloat();
-		world.spawnParticle("smoke", x1, y1, z1, 0.0D, 0.0D, 0.0D);
-		world.spawnParticle("smoke", x1, y1, z1, 0.0D, 0.0D, 0.0D);
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void randomDisplayTick(World world, int x, int y, int z, Random random) {
+        float x1 = x + random.nextFloat();
+        float y1 = y + 0.5F;
+        float z1 = z + random.nextFloat();
+        world.spawnParticle("smoke", x1, y1, z1, 0.0D, 0.0D, 0.0D);
+        world.spawnParticle("smoke", x1, y1, z1, 0.0D, 0.0D, 0.0D);
 
-	}
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityBasicLantern();
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2) {
+        return new TileEntityBasicLantern();
+    }
 
-	@Override
-	public Item getItem(World world, int x, int y, int z) {
-		return Item.getItemFromBlock(Calculator.basic_lantern);
-	}
+    @Override
+    public Item getItem(World world, int x, int y, int z) {
+        return Item.getItemFromBlock(Calculator.basic_lantern);
+    }
 
-	@Override
-	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z, boolean returnDrops) {
-		SonarHelper.dropTile(player, world.getBlock(x, y, z), world, x, y, z);
-		return null;
-	}
+    @Override
+    public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z,
+        boolean returnDrops) {
+        SonarHelper.dropTile(player, world.getBlock(x, y, z), world, x, y, z);
+        return null;
+    }
 
-	@Override
-	public boolean canDismantle(EntityPlayer player, World world, int x, int y, int z) {
-		return true;
-	}
+    @Override
+    public boolean canDismantle(EntityPlayer player, World world, int x, int y, int z) {
+        return true;
+    }
 
 }

@@ -1,8 +1,8 @@
 package sonar.calculator.mod.api.nutrition;
 
-/**implemented on Health Processor*/
+/** implemented on Health Processor */
 public interface IHungerProcessor {
 
-	/**gets the current health points*/
-	public int getHungerPoints();
+    /** gets the current health points */
+    public int getHungerPoints();
 }

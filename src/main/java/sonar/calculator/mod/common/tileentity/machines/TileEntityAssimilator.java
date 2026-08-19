@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.api.machines.ProcessType;
 import sonar.calculator.mod.api.nutrition.IHealthStore;
@@ -27,254 +28,295 @@ import sonar.core.helpers.NBTHelper.SyncType;
 import sonar.core.helpers.SonarHelper;
 
 public abstract class TileEntityAssimilator extends TileEntityInventory {
-	public boolean hasTree;
-	public Random rand = new Random();
-	public int tickRate = 30, tick;
 
-	public abstract boolean harvestBlock(BlockCoords block);
+    public boolean hasTree;
+    public Random rand = new Random();
+    public int tickRate = 30, tick;
 
-	public void updateEntity() {
-		if (this.worldObj.isRemote) {
-			return;
-		}
-		if (this.tick != tickRate) {
-			tick++;
-		} else {
-			if (this instanceof Algorithm) {
-				ForgeDirection dir = SonarHelper.getForward(this.getBlockMetadata());
-				SonarAPI.getItemHelper().transferItems(this, this.getWorldObj().getTileEntity(xCoord + (dir.getOpposite().offsetX), yCoord, zCoord + (dir.getOpposite().offsetZ)), dir, dir.getOpposite(), null);
-			}
-			tick = 0;
-			this.hasTree = hasTree();
-			if (hasTree) {
-				List<BlockCoords> leaves = getLeaves();
-				if (leaves != null && leaves.size() != 0) {
-					for (BlockCoords coords : leaves) {
-						Block block = coords.getBlock(worldObj);
-						int meta = worldObj.getBlockMetadata(coords.getX(), coords.getY(), coords.getZ());
-						if (meta > 2) {
-							if (harvestBlock(coords)) {
-								return;
-							}
-							/** remove energy maybe **/
-						}
-					}
-				}
-			}
-		}
-	}
+    public abstract boolean harvestBlock(BlockCoords block);
 
-	public boolean hasTree() {
-		ForgeDirection dir = SonarHelper.getForward(this.worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
-		boolean flag = true;
-		for (int log = 0; log < 3; log++) {
-			if (!(this.worldObj.getBlock(this.xCoord + dir.offsetX, this.yCoord + log, this.zCoord + dir.offsetZ) instanceof CalculatorLogs)) {
-				flag = false;
-			}
-		}
-		int leafCount = 0;
-		for (int X = -3; X < 3; X++) {
-			for (int Z = -3; Z < 3; Z++) {
-				for (int leaves = 1; leaves < 8; leaves++) {
-					if (!(this.worldObj.getBlock(this.xCoord + dir.offsetX + X, this.yCoord + leaves, this.zCoord + dir.offsetZ + Z) instanceof CalculatorLeaves)) {
-						leafCount++;
-					}
-				}
-			}
-		}
-		if (leafCount < 10) {
-			flag = false;
-		}
-		return flag;
-	}
+    public void updateEntity() {
+        if (this.worldObj.isRemote) {
+            return;
+        }
+        if (this.tick != tickRate) {
+            tick++;
+        } else {
+            if (this instanceof Algorithm) {
+                ForgeDirection dir = SonarHelper.getForward(this.getBlockMetadata());
+                SonarAPI.getItemHelper()
+                    .transferItems(
+                        this,
+                        this.getWorldObj()
+                            .getTileEntity(
+                                xCoord + (dir.getOpposite().offsetX),
+                                yCoord,
+                                zCoord + (dir.getOpposite().offsetZ)),
+                        dir,
+                        dir.getOpposite(),
+                        null);
+            }
+            tick = 0;
+            this.hasTree = hasTree();
+            if (hasTree) {
+                List<BlockCoords> leaves = getLeaves();
+                if (leaves != null && leaves.size() != 0) {
+                    for (BlockCoords coords : leaves) {
+                        Block block = coords.getBlock(worldObj);
+                        int meta = worldObj.getBlockMetadata(coords.getX(), coords.getY(), coords.getZ());
+                        if (meta > 2) {
+                            if (harvestBlock(coords)) {
+                                return;
+                            }
+                            /** remove energy maybe **/
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public List<BlockCoords> getLeaves() {
-		ForgeDirection dir = SonarHelper.getForward(this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord));
-		List<BlockCoords> leafList = new ArrayList();
-		for (int X = -2; X < 3; X++) {
-			for (int Z = -2; Z < 3; Z++) {
-				for (int leaves = 1; leaves < 8; leaves++) {
-					if ((this.worldObj.getBlock(this.xCoord + dir.offsetX + X, this.yCoord + leaves, this.zCoord + dir.offsetZ + Z) instanceof CalculatorLeaves)) {
-						leafList.add(new BlockCoords(this.xCoord + dir.offsetX + X, this.yCoord + leaves, this.zCoord + dir.offsetZ + Z));
-					}
+    public boolean hasTree() {
+        ForgeDirection dir = SonarHelper.getForward(this.worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+        boolean flag = true;
+        for (int log = 0; log < 3; log++) {
+            if (!(this.worldObj.getBlock(
+                this.xCoord + dir.offsetX,
+                this.yCoord + log,
+                this.zCoord + dir.offsetZ) instanceof CalculatorLogs)) {
+                flag = false;
+            }
+        }
+        int leafCount = 0;
+        for (int X = -3; X < 3; X++) {
+            for (int Z = -3; Z < 3; Z++) {
+                for (int leaves = 1; leaves < 8; leaves++) {
+                    if (!(this.worldObj.getBlock(
+                        this.xCoord + dir.offsetX + X,
+                        this.yCoord + leaves,
+                        this.zCoord + dir.offsetZ + Z) instanceof CalculatorLeaves)) {
+                        leafCount++;
+                    }
+                }
+            }
+        }
+        if (leafCount < 10) {
+            flag = false;
+        }
+        return flag;
+    }
 
-				}
-			}
-		}
-		return leafList;
-	}
+    public List<BlockCoords> getLeaves() {
+        ForgeDirection dir = SonarHelper
+            .getForward(this.worldObj.getBlockMetadata(this.xCoord, this.yCoord, this.zCoord));
+        List<BlockCoords> leafList = new ArrayList();
+        for (int X = -2; X < 3; X++) {
+            for (int Z = -2; Z < 3; Z++) {
+                for (int leaves = 1; leaves < 8; leaves++) {
+                    if ((this.worldObj.getBlock(
+                        this.xCoord + dir.offsetX + X,
+                        this.yCoord + leaves,
+                        this.zCoord + dir.offsetZ + Z) instanceof CalculatorLeaves)) {
+                        leafList.add(
+                            new BlockCoords(
+                                this.xCoord + dir.offsetX + X,
+                                this.yCoord + leaves,
+                                this.zCoord + dir.offsetZ + Z));
+                    }
 
-	public void readData(NBTTagCompound nbt, SyncType type) {
-		super.readData(nbt, type);
-		if (type == SyncType.SAVE)
-			tick = nbt.getInteger("tick");
-	}
+                }
+            }
+        }
+        return leafList;
+    }
 
-	public void writeData(NBTTagCompound nbt, SyncType type) {
-		super.writeData(nbt, type);
-		if (type == SyncType.SAVE)
-			nbt.setInteger("tick", tick);
-	}
+    public void readData(NBTTagCompound nbt, SyncType type) {
+        super.readData(nbt, type);
+        if (type == SyncType.SAVE) tick = nbt.getInteger("tick");
+    }
 
-	public static class Stone extends TileEntityAssimilator {
+    public void writeData(NBTTagCompound nbt, SyncType type) {
+        super.writeData(nbt, type);
+        if (type == SyncType.SAVE) nbt.setInteger("tick", tick);
+    }
 
-		public Stone() {
-			super.slots = new ItemStack[1];
-		}
+    public static class Stone extends TileEntityAssimilator {
 
-		public int healthPoints, hungerPoints, speed = 4;;
+        public Stone() {
+            super.slots = new ItemStack[1];
+        }
 
-		public void updateEntity() {
-			super.updateEntity();
-			if (this.worldObj.isRemote) {
-				return;
-			}
-			chargeHunger(slots[0]);
-			chargeHealth(slots[0]);
-		}
+        public int healthPoints, hungerPoints, speed = 4;;
 
-		public boolean harvestBlock(BlockCoords block) {
-			if (block.getBlock(worldObj) == Calculator.tanzaniteLeaf) {
-				this.healthPoints++;
-				this.worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), 0, 2);
-				return true;
-			} else if (block.getBlock(worldObj) == Calculator.amethystLeaf) {
-				this.hungerPoints++;
-				this.worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), 0, 2);
-				return true;
-			}
-			return false;
-		}
+        public void updateEntity() {
+            super.updateEntity();
+            if (this.worldObj.isRemote) {
+                return;
+            }
+            chargeHunger(slots[0]);
+            chargeHealth(slots[0]);
+        }
 
-		public void chargeHunger(ItemStack stack) {
-			if (!(stack == null) && this.hungerPoints != 0) {
-				if (stack.getItem() instanceof IHungerStore) {
-					IHungerStore module = (IHungerStore) stack.getItem();
-					int hunger = module.getHungerPoints(stack);
-					int max = module.getMaxHungerPoints(stack);
-					if (!(hunger >= max) || max == -1) {
-						if (hungerPoints >= speed) {
-							if (max == -1 || max >= hunger + speed) {
-								module.transferHunger(speed, stack, ProcessType.ADD);
-								hungerPoints = hungerPoints - speed;
-							} else if (max != -1) {
-								module.transferHunger(max - hunger, stack, ProcessType.ADD);
-								hungerPoints = hungerPoints - (max - hunger);
-							}
-						} else if (hungerPoints <= speed) {
-							if (max == -1 | max >= hunger + speed) {
-								module.transferHunger(speed, stack, ProcessType.ADD);
-								hungerPoints = 0;
-							} else if (max != -1) {
-								module.transferHunger(max - hunger, stack, ProcessType.ADD);
-								hungerPoints = hungerPoints - max - hunger;
-							}
-						}
-					}
-				}
-			}
-		}
+        public boolean harvestBlock(BlockCoords block) {
+            if (block.getBlock(worldObj) == Calculator.tanzaniteLeaf) {
+                this.healthPoints++;
+                this.worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), 0, 2);
+                return true;
+            } else if (block.getBlock(worldObj) == Calculator.amethystLeaf) {
+                this.hungerPoints++;
+                this.worldObj.setBlockMetadataWithNotify(block.getX(), block.getY(), block.getZ(), 0, 2);
+                return true;
+            }
+            return false;
+        }
 
-		public void chargeHealth(ItemStack stack) {
-			if (!(stack == null) && this.healthPoints != 0) {
-				if (stack.getItem() instanceof IHealthStore) {
-					IHealthStore module = (IHealthStore) stack.getItem();
-					int health = module.getHealthPoints(stack);
-					int max = module.getMaxHealthPoints(stack);
-					if (!(health >= max) || max == -1) {
-						if (healthPoints >= speed) {
-							if (max == -1 || max >= health + speed) {
-								module.transferHealth(speed, stack, ProcessType.ADD);
-								healthPoints = healthPoints - speed;
-							} else if (max != -1) {
-								module.transferHealth(max - health, stack, ProcessType.ADD);
-								healthPoints = healthPoints - (max - health);
-							}
-						} else if (healthPoints <= speed) {
-							if (max == -1 | max >= health + speed) {
-								module.transferHealth(speed, stack, ProcessType.ADD);
-								healthPoints = 0;
-							} else if (max != -1) {
-								module.transferHealth(max - health, stack, ProcessType.ADD);
-								healthPoints = healthPoints - max - health;
-							}
-						}
-					}
-				}
-			}
+        public void chargeHunger(ItemStack stack) {
+            if (!(stack == null) && this.hungerPoints != 0) {
+                if (stack.getItem() instanceof IHungerStore) {
+                    IHungerStore module = (IHungerStore) stack.getItem();
+                    int hunger = module.getHungerPoints(stack);
+                    int max = module.getMaxHungerPoints(stack);
+                    if (!(hunger >= max) || max == -1) {
+                        if (hungerPoints >= speed) {
+                            if (max == -1 || max >= hunger + speed) {
+                                module.transferHunger(speed, stack, ProcessType.ADD);
+                                hungerPoints = hungerPoints - speed;
+                            } else if (max != -1) {
+                                module.transferHunger(max - hunger, stack, ProcessType.ADD);
+                                hungerPoints = hungerPoints - (max - hunger);
+                            }
+                        } else if (hungerPoints <= speed) {
+                            if (max == -1 | max >= hunger + speed) {
+                                module.transferHunger(speed, stack, ProcessType.ADD);
+                                hungerPoints = 0;
+                            } else if (max != -1) {
+                                module.transferHunger(max - hunger, stack, ProcessType.ADD);
+                                hungerPoints = hungerPoints - max - hunger;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		}
+        public void chargeHealth(ItemStack stack) {
+            if (!(stack == null) && this.healthPoints != 0) {
+                if (stack.getItem() instanceof IHealthStore) {
+                    IHealthStore module = (IHealthStore) stack.getItem();
+                    int health = module.getHealthPoints(stack);
+                    int max = module.getMaxHealthPoints(stack);
+                    if (!(health >= max) || max == -1) {
+                        if (healthPoints >= speed) {
+                            if (max == -1 || max >= health + speed) {
+                                module.transferHealth(speed, stack, ProcessType.ADD);
+                                healthPoints = healthPoints - speed;
+                            } else if (max != -1) {
+                                module.transferHealth(max - health, stack, ProcessType.ADD);
+                                healthPoints = healthPoints - (max - health);
+                            }
+                        } else if (healthPoints <= speed) {
+                            if (max == -1 | max >= health + speed) {
+                                module.transferHealth(speed, stack, ProcessType.ADD);
+                                healthPoints = 0;
+                            } else if (max != -1) {
+                                module.transferHealth(max - health, stack, ProcessType.ADD);
+                                healthPoints = healthPoints - max - health;
+                            }
+                        }
+                    }
+                }
+            }
 
-		public void readData(NBTTagCompound nbt, SyncType type) {
-			super.readData(nbt, type);
-			healthPoints = nbt.getInteger("health");
-			hungerPoints = nbt.getInteger("hunger");
-			if (type != SyncType.DROP)
-				hasTree = nbt.getBoolean("hasTree");
-		}
+        }
 
-		public void writeData(NBTTagCompound nbt, SyncType type) {
-			super.writeData(nbt, type);
-			nbt.setInteger("health", healthPoints);
-			nbt.setInteger("hunger", hungerPoints);
-			if (type != SyncType.DROP)
-				nbt.setBoolean("hasTree", hasTree);
-		}
-	}
+        public void readData(NBTTagCompound nbt, SyncType type) {
+            super.readData(nbt, type);
+            healthPoints = nbt.getInteger("health");
+            hungerPoints = nbt.getInteger("hunger");
+            if (type != SyncType.DROP) hasTree = nbt.getBoolean("hasTree");
+        }
 
-	public static class Algorithm extends TileEntityAssimilator implements ISidedInventory {
+        public void writeData(NBTTagCompound nbt, SyncType type) {
+            super.writeData(nbt, type);
+            nbt.setInteger("health", healthPoints);
+            nbt.setInteger("hunger", hungerPoints);
+            if (type != SyncType.DROP) nbt.setBoolean("hasTree", hasTree);
+        }
+    }
 
-		public Algorithm() {
-			super.slots = new ItemStack[27];
-		}
+    public static class Algorithm extends TileEntityAssimilator implements ISidedInventory {
 
-		public boolean harvestBlock(BlockCoords block) {
-			int meta = worldObj.getBlockMetadata(block.getX(), block.getY(), block.getZ());
-			if (meta > 2) {
-				int randInt = 3 + rand.nextInt(3);
-				ItemStack[] stacks = TreeHarvestRecipes.harvestLeaves(worldObj, block.getX(), block.getY(), block.getZ(), randInt);
+        public Algorithm() {
+            super.slots = new ItemStack[27];
+        }
 
-				ForgeDirection forward = ForgeDirection.getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
-				for (ItemStack s : stacks) {
-					if (s != null) {
-						ItemStack stack = s.copy();
-						TileEntity tile = this.getWorldObj().getTileEntity(xCoord + (forward.getOpposite().offsetX), yCoord, zCoord + (forward.getOpposite().offsetZ));
-						StoredItemStack storedstack = new StoredItemStack(stack);
-						// System.out.print(storedstack.copy().getFullStack());
-						StoredItemStack harvest = SonarAPI.getItemHelper().addItems(this, storedstack.copy(), ForgeDirection.getOrientation(0), ActionType.PERFORM, null);
-						storedstack.remove(harvest);
-						if (storedstack != null && storedstack.stored > 0) {
-							EntityItem drop = new EntityItem(worldObj, xCoord + (forward.getOpposite().offsetX), yCoord, zCoord + (forward.getOpposite().offsetZ), storedstack.getFullStack());
-							worldObj.spawnEntityInWorld(drop);
-						}
-					}
+        public boolean harvestBlock(BlockCoords block) {
+            int meta = worldObj.getBlockMetadata(block.getX(), block.getY(), block.getZ());
+            if (meta > 2) {
+                int randInt = 3 + rand.nextInt(3);
+                ItemStack[] stacks = TreeHarvestRecipes
+                    .harvestLeaves(worldObj, block.getX(), block.getY(), block.getZ(), randInt);
 
-					// for (int i = 0; i < stacks.length; i++) {
-					// SonarAPI.getItemHelper().addItems(this, new StoredItemStack(ItemStackHelper.restoreItemStack(stacks[i], 1)), ForgeDirection.getOrientation(0), ActionType.PERFORM, null);
-					// }
-				}
-				return true;
-			}
+                ForgeDirection forward = ForgeDirection
+                    .getOrientation(worldObj.getBlockMetadata(xCoord, yCoord, zCoord));
+                for (ItemStack s : stacks) {
+                    if (s != null) {
+                        ItemStack stack = s.copy();
+                        TileEntity tile = this.getWorldObj()
+                            .getTileEntity(
+                                xCoord + (forward.getOpposite().offsetX),
+                                yCoord,
+                                zCoord + (forward.getOpposite().offsetZ));
+                        StoredItemStack storedstack = new StoredItemStack(stack);
+                        // System.out.print(storedstack.copy().getFullStack());
+                        StoredItemStack harvest = SonarAPI.getItemHelper()
+                            .addItems(
+                                this,
+                                storedstack.copy(),
+                                ForgeDirection.getOrientation(0),
+                                ActionType.PERFORM,
+                                null);
+                        storedstack.remove(harvest);
+                        if (storedstack != null && storedstack.stored > 0) {
+                            EntityItem drop = new EntityItem(
+                                worldObj,
+                                xCoord + (forward.getOpposite().offsetX),
+                                yCoord,
+                                zCoord + (forward.getOpposite().offsetZ),
+                                storedstack.getFullStack());
+                            worldObj.spawnEntityInWorld(drop);
+                        }
+                    }
 
-			return false;
+                    // for (int i = 0; i < stacks.length; i++) {
+                    // SonarAPI.getItemHelper().addItems(this, new
+                    // StoredItemStack(ItemStackHelper.restoreItemStack(stacks[i], 1)),
+                    // ForgeDirection.getOrientation(0), ActionType.PERFORM, null);
+                    // }
+                }
+                return true;
+            }
 
-		}
+            return false;
 
-		@Override
-		public int[] getAccessibleSlotsFromSide(int side) {
-			return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 };
-		}
+        }
 
-		@Override
-		public boolean canInsertItem(int slot, ItemStack item, int side) {
-			return true;
-		}
+        @Override
+        public int[] getAccessibleSlotsFromSide(int side) {
+            return new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                25, 26 };
+        }
 
-		@Override
-		public boolean canExtractItem(int slot, ItemStack item, int side) {
-			return true;
-		}
+        @Override
+        public boolean canInsertItem(int slot, ItemStack item, int side) {
+            return true;
+        }
 
-	}
+        @Override
+        public boolean canExtractItem(int slot, ItemStack item, int side) {
+            return true;
+        }
+
+    }
 
 }

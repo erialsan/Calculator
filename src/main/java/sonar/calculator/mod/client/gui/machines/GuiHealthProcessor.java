@@ -12,26 +12,29 @@ import sonar.calculator.mod.common.tileentity.machines.TileEntityHealthProcessor
 import sonar.core.helpers.FontHelper;
 
 public class GuiHealthProcessor extends GuiContainer {
-	public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/hungerprocessor.png");
 
-	public TileEntityHealthProcessor entity;
+    public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/hungerprocessor.png");
 
-	public GuiHealthProcessor(InventoryPlayer inventoryPlayer, TileEntityHealthProcessor entity) {
-		super(new ContainerHealthProcessor(inventoryPlayer, entity));
-		this.entity = entity;
-	}
+    public TileEntityHealthProcessor entity;
 
-	@Override
-	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-		FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
-		String points = FontHelper.translate("points.health") + ": " + this.entity.storedpoints;
-		FontHelper.textCentre(points, xSize, 60, 0);
-	}
+    public GuiHealthProcessor(InventoryPlayer inventoryPlayer, TileEntityHealthProcessor entity) {
+        super(new ContainerHealthProcessor(inventoryPlayer, entity));
+        this.entity = entity;
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(bground);
-		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	}
+    @Override
+    public void drawGuiContainerForegroundLayer(int par1, int par2) {
+        FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
+        String points = FontHelper.translate("points.health") + ": " + this.entity.storedpoints;
+        FontHelper.textCentre(points, xSize, 60, 0);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(bground);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
 }

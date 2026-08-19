@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.item.misc.UpgradeCircuit;
 import sonar.calculator.mod.common.tileentity.machines.TileEntityDockingStation;
@@ -22,98 +23,110 @@ import sonar.core.utils.BlockInteractionType;
 
 public class DockingStation extends SonarMachineBlock {
 
-	public DockingStation() {
-		super(SonarMaterials.machine);
-		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.95F, 1.0F);
-	}
+    public DockingStation() {
+        super(SonarMaterials.machine);
+        setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.95F, 1.0F);
+    }
 
-	@Override
-	public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
-		if (player != null) {
-			if (interact.type == BlockInteractionType.RIGHT) {
-				if (player.getHeldItem() != null && player.getHeldItem().getItem() instanceof UpgradeCircuit) {
-					return false;
-				}
-				if (!insertCalculator(player, world, x, y, z)) {
-					if (!world.isRemote) {
-						if (world.getTileEntity(x, y, z) != null && world.getTileEntity(x, y, z) instanceof TileEntityDockingStation) {
-							TileEntityDockingStation station = (TileEntityDockingStation) world.getTileEntity(x, y, z);
-							if (station.isCalculator(station.calcStack) != 0) {
-								player.openGui(Calculator.instance, CalculatorGui.DockingStation, world, x, y, z);
-							} else {
-								FontHelper.sendMessage(FontHelper.translate("docking.noCalculator"), world, player);
-							}
-						}
-					}
-				}
-			}
+    @Override
+    public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
+        if (player != null) {
+            if (interact.type == BlockInteractionType.RIGHT) {
+                if (player.getHeldItem() != null && player.getHeldItem()
+                    .getItem() instanceof UpgradeCircuit) {
+                    return false;
+                }
+                if (!insertCalculator(player, world, x, y, z)) {
+                    if (!world.isRemote) {
+                        if (world.getTileEntity(x, y, z) != null
+                            && world.getTileEntity(x, y, z) instanceof TileEntityDockingStation) {
+                            TileEntityDockingStation station = (TileEntityDockingStation) world.getTileEntity(x, y, z);
+                            if (station.isCalculator(station.calcStack) != 0) {
+                                player.openGui(Calculator.instance, CalculatorGui.DockingStation, world, x, y, z);
+                            } else {
+                                FontHelper.sendMessage(FontHelper.translate("docking.noCalculator"), world, player);
+                            }
+                        }
+                    }
+                }
+            }
 
-		}
-		return true;
-	}
+        }
+        return true;
+    }
 
-	public boolean insertCalculator(EntityPlayer player, World world, int x, int y, int z) {
-		if (player.getHeldItem() != null && TileEntityDockingStation.isCalculator(player.getHeldItem()) > 0) {
-			if (world.getTileEntity(x, y, z) != null && world.getTileEntity(x, y, z) instanceof TileEntityDockingStation) {
-				TileEntityDockingStation station = (TileEntityDockingStation) world.getTileEntity(x, y, z);
-				if (station.getStackInSlot(0) == null) {
-					station.calcStack = player.getHeldItem().copy();
-					player.getHeldItem().stackSize--;
-					return true;
-				}
-			}
+    public boolean insertCalculator(EntityPlayer player, World world, int x, int y, int z) {
+        if (player.getHeldItem() != null && TileEntityDockingStation.isCalculator(player.getHeldItem()) > 0) {
+            if (world.getTileEntity(x, y, z) != null
+                && world.getTileEntity(x, y, z) instanceof TileEntityDockingStation) {
+                TileEntityDockingStation station = (TileEntityDockingStation) world.getTileEntity(x, y, z);
+                if (station.getStackInSlot(0) == null) {
+                    station.calcStack = player.getHeldItem()
+                        .copy();
+                    player.getHeldItem().stackSize--;
+                    return true;
+                }
+            }
 
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityDockingStation();
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2) {
+        return new TileEntityDockingStation();
+    }
 
-	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
-		CalculatorHelper.addEnergytoToolTip(stack, player, list);
+    @Override
+    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+        CalculatorHelper.addEnergytoToolTip(stack, player, list);
 
-	}
+    }
 
-	public boolean hasSpecialRenderer() {
-		return true;
-	}
+    public boolean hasSpecialRenderer() {
+        return true;
+    }
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
 
-		TileEntityDockingStation entity = (TileEntityDockingStation) world.getTileEntity(x, y, z);
+        TileEntityDockingStation entity = (TileEntityDockingStation) world.getTileEntity(x, y, z);
 
-		ItemStack itemstack = entity.calcStack;
+        ItemStack itemstack = entity.calcStack;
 
-		if (itemstack != null) {
-			float f = this.rand.nextFloat() * 0.8F + 0.1F;
-			float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
-			float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
+        if (itemstack != null) {
+            float f = this.rand.nextFloat() * 0.8F + 0.1F;
+            float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
+            float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
 
-			while (itemstack.stackSize > 0) {
-				int j = this.rand.nextInt(21) + 10;
+            while (itemstack.stackSize > 0) {
+                int j = this.rand.nextInt(21) + 10;
 
-				if (j > itemstack.stackSize) {
-					j = itemstack.stackSize;
-				}
+                if (j > itemstack.stackSize) {
+                    j = itemstack.stackSize;
+                }
 
-				itemstack.stackSize -= j;
+                itemstack.stackSize -= j;
 
-				EntityItem item = new EntityItem(world, x + f, y + f1, z + f2, new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
+                EntityItem item = new EntityItem(
+                    world,
+                    x + f,
+                    y + f1,
+                    z + f2,
+                    new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
 
-				if (itemstack.hasTagCompound()) {
-					item.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
-				}
+                if (itemstack.hasTagCompound()) {
+                    item.getEntityItem()
+                        .setTagCompound(
+                            (NBTTagCompound) itemstack.getTagCompound()
+                                .copy());
+                }
 
-				world.spawnEntityInWorld(item);
-			}
-		}
+                world.spawnEntityInWorld(item);
+            }
+        }
 
-		super.breakBlock(world, x, y, z, oldblock, oldMetadata);
+        super.breakBlock(world, x, y, z, oldblock, oldMetadata);
 
-	}
+    }
 }

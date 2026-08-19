@@ -8,6 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.machines.TileEntityPowerCube;
 import sonar.calculator.mod.network.CalculatorGui;
@@ -15,51 +19,51 @@ import sonar.calculator.mod.utils.helpers.CalculatorHelper;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.utils.BlockInteraction;
-import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class PowerCube extends SonarMachineBlock {
-	@SideOnly(Side.CLIENT)
-	private IIcon iconFront,iconTop;
 
-	public PowerCube() {
-		super(SonarMaterials.machine);
-	}
+    @SideOnly(Side.CLIENT)
+    private IIcon iconFront, iconTop;
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube");
-		this.iconFront = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube_front");
-		this.iconTop = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube");
-	}
+    public PowerCube() {
+        super(SonarMaterials.machine);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
-		return side == metadata ? this.iconFront : side == 0 ? this.iconTop : side == 1 ? this.iconTop : (metadata == 0) && (side == 3) ? this.iconFront : this.blockIcon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        this.blockIcon = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube");
+        this.iconFront = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube_front");
+        this.iconTop = iconRegister.registerIcon(Calculator.modid + ":" + "on_powercube");
+    }
 
-	@Override
-	public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
-		if (player != null) {
-			if (!world.isRemote) {
-				FMLNetworkHandler.openGui(player, Calculator.instance, CalculatorGui.PowerCube, world, x, y, z);
-			}
-		}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int metadata) {
+        return side == metadata ? this.iconFront
+            : side == 0 ? this.iconTop
+                : side == 1 ? this.iconTop : (metadata == 0) && (side == 3) ? this.iconFront : this.blockIcon;
+    }
 
-		return true;
-	}
+    @Override
+    public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
+        if (player != null) {
+            if (!world.isRemote) {
+                FMLNetworkHandler.openGui(player, Calculator.instance, CalculatorGui.PowerCube, world, x, y, z);
+            }
+        }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i) {
-		return new TileEntityPowerCube();
-	}
+        return true;
+    }
 
-	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
-		CalculatorHelper.addEnergytoToolTip(stack, player, list);
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntityPowerCube();
+    }
 
-	}
+    @Override
+    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+        CalculatorHelper.addEnergytoToolTip(stack, player, list);
+
+    }
 }

@@ -1,94 +1,96 @@
 package sonar.calculator.mod.common.containers;
 
-import ic2.api.item.IElectricItem;
-import ic2.api.item.ISpecialElectricItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import cofh.api.energy.IEnergyContainerItem;
+import ic2.api.item.IElectricItem;
+import ic2.api.item.ISpecialElectricItem;
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.generators.TileEntityCalculatorLocator;
 import sonar.calculator.mod.utils.SlotLocatorModule;
 import sonar.core.integration.SonarLoader;
 import sonar.core.inventory.ContainerSync;
-import cofh.api.energy.IEnergyContainerItem;
 
 public class ContainerCalculatorLocator extends ContainerSync {
-	private TileEntityCalculatorLocator entity;
 
-	public ContainerCalculatorLocator(InventoryPlayer inventory, TileEntityCalculatorLocator entity) {
-		super(entity);
-		this.entity = entity;
+    private TileEntityCalculatorLocator entity;
 
-		addSlotToContainer(new Slot(entity, 0, 28, 60));
-		addSlotToContainer(new SlotLocatorModule(entity, 1, 132, 60));
+    public ContainerCalculatorLocator(InventoryPlayer inventory, TileEntityCalculatorLocator entity) {
+        super(entity);
+        this.entity = entity;
 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-			}
-		}
+        addSlotToContainer(new Slot(entity, 0, 28, 60));
+        addSlotToContainer(new SlotLocatorModule(entity, 1, 132, 60));
 
-		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 142));
-		}
-	}
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
 
-	@Override
-	public ItemStack transferStackInSlot(EntityPlayer player, int id) {
-		ItemStack itemstack = null;
-		Slot slot = (Slot) this.inventorySlots.get(id);
+        for (int i = 0; i < 9; i++) {
+            addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 142));
+        }
+    }
 
-		if ((slot != null) && (slot.getHasStack())) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer player, int id) {
+        ItemStack itemstack = null;
+        Slot slot = (Slot) this.inventorySlots.get(id);
 
-			if ((id != 1) && (id != 0)) {
-				if ((itemstack1.getItem() instanceof IEnergyContainerItem)) {
-					if (!mergeItemStack(itemstack1, 0, 1, false)) {
-						return null;
-					}
-				} else if (SonarLoader.ic2Loaded() && itemstack1.getItem() instanceof ISpecialElectricItem) {
-					if (!mergeItemStack(itemstack1, 0, 1, false)) {
-						return null;
-					}
-				} else if (SonarLoader.ic2Loaded() && itemstack1.getItem() instanceof IElectricItem) {
-					if (!mergeItemStack(itemstack1, 0, 1, false)) {
-						return null;
-					}
-				} else if (itemstack1.getItem() == Calculator.itemLocatorModule) {
-					if (!mergeItemStack(itemstack1, 1, 2, false)) {
-						return null;
-					}
-				} else if ((id >= 3) && (id < 30)) {
-					if (!mergeItemStack(itemstack1, 29, 38, false)) {
-						return null;
-					}
-				} else if ((id >= 29) && (id < 38) && (!mergeItemStack(itemstack1, 2, 29, false))) {
-					return null;
-				}
-			} else if (!mergeItemStack(itemstack1, 2, 38, false)) {
-				return null;
-			}
+        if ((slot != null) && (slot.getHasStack())) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
-			if (itemstack1.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
-			}
+            if ((id != 1) && (id != 0)) {
+                if ((itemstack1.getItem() instanceof IEnergyContainerItem)) {
+                    if (!mergeItemStack(itemstack1, 0, 1, false)) {
+                        return null;
+                    }
+                } else if (SonarLoader.ic2Loaded() && itemstack1.getItem() instanceof ISpecialElectricItem) {
+                    if (!mergeItemStack(itemstack1, 0, 1, false)) {
+                        return null;
+                    }
+                } else if (SonarLoader.ic2Loaded() && itemstack1.getItem() instanceof IElectricItem) {
+                    if (!mergeItemStack(itemstack1, 0, 1, false)) {
+                        return null;
+                    }
+                } else if (itemstack1.getItem() == Calculator.itemLocatorModule) {
+                    if (!mergeItemStack(itemstack1, 1, 2, false)) {
+                        return null;
+                    }
+                } else if ((id >= 3) && (id < 30)) {
+                    if (!mergeItemStack(itemstack1, 29, 38, false)) {
+                        return null;
+                    }
+                } else if ((id >= 29) && (id < 38) && (!mergeItemStack(itemstack1, 2, 29, false))) {
+                    return null;
+                }
+            } else if (!mergeItemStack(itemstack1, 2, 38, false)) {
+                return null;
+            }
 
-			if (itemstack1.stackSize == itemstack.stackSize) {
-				return null;
-			}
+            if (itemstack1.stackSize == 0) {
+                slot.putStack((ItemStack) null);
+            } else {
+                slot.onSlotChanged();
+            }
 
-			slot.onPickupFromSlot(player, itemstack1);
-		}
+            if (itemstack1.stackSize == itemstack.stackSize) {
+                return null;
+            }
 
-		return itemstack;
-	}
+            slot.onPickupFromSlot(player, itemstack1);
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return entity.isUseableByPlayer(player);
-	}
+        return itemstack;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return entity.isUseableByPlayer(player);
+    }
 }

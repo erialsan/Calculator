@@ -10,94 +10,106 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.misc.TileEntityCalculator;
 import sonar.calculator.mod.network.CalculatorGui;
 import sonar.core.common.block.SonarMachineBlock;
 import sonar.core.common.block.SonarMaterials;
 import sonar.core.utils.BlockInteraction;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class AtomicCalculatorBlock extends SonarMachineBlock {
-	@SideOnly(Side.CLIENT)
-	private IIcon iconFront;
-	@SideOnly(Side.CLIENT)
-	private IIcon iconTop;
 
-	public AtomicCalculatorBlock() {
-		super(SonarMaterials.machine);
-	}
+    @SideOnly(Side.CLIENT)
+    private IIcon iconFront;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconTop;
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon("Calculator:atomiccalculatoranimate1");
-		this.iconFront = iconRegister.registerIcon("Calculator:atomiccalculatoranimate");
-		this.iconTop = iconRegister.registerIcon("Calculator:atomiccalculatoranimate2");
-	}
+    public AtomicCalculatorBlock() {
+        super(SonarMaterials.machine);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
-		return side == metadata ? this.iconFront : side == 0 ? this.iconTop : side == 1 ? this.iconTop : (metadata == 0) && (side == 3) ? this.iconFront : this.blockIcon;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister iconRegister) {
+        this.blockIcon = iconRegister.registerIcon("Calculator:atomiccalculatoranimate1");
+        this.iconFront = iconRegister.registerIcon("Calculator:atomiccalculatoranimate");
+        this.iconTop = iconRegister.registerIcon("Calculator:atomiccalculatoranimate2");
+    }
 
-	@Override
-	public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
-		player.openGui(Calculator.instance, CalculatorGui.AtomicCalculator, world, x, y, z);
-		return true;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int metadata) {
+        return side == metadata ? this.iconFront
+            : side == 0 ? this.iconTop
+                : side == 1 ? this.iconTop : (metadata == 0) && (side == 3) ? this.iconFront : this.blockIcon;
+    }
 
-	@Override
-	public boolean dropStandard(World world, int x, int y, int z) {
-		return true;
-	}
+    @Override
+    public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
+        player.openGui(Calculator.instance, CalculatorGui.AtomicCalculator, world, x, y, z);
+        return true;
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int i) {
-		return new TileEntityCalculator.Atomic();
-	}
+    @Override
+    public boolean dropStandard(World world, int x, int y, int z) {
+        return true;
+    }
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
-		TileEntity entity = world.getTileEntity(x, y, z);
+    @Override
+    public TileEntity createNewTileEntity(World world, int i) {
+        return new TileEntityCalculator.Atomic();
+    }
 
-		if (entity != null && entity instanceof IInventory) {
-			IInventory tileentity = (IInventory) world.getTileEntity(x, y, z);
-			for (int i = 0; i < tileentity.getSizeInventory(); i++) {
-				ItemStack itemstack = tileentity.getStackInSlot(i);
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
+        TileEntity entity = world.getTileEntity(x, y, z);
 
-				if (itemstack != null && !(i == 0)) {
-					float f = this.rand.nextFloat() * 0.8F + 0.1F;
-					float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
-					float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
+        if (entity != null && entity instanceof IInventory) {
+            IInventory tileentity = (IInventory) world.getTileEntity(x, y, z);
+            for (int i = 0; i < tileentity.getSizeInventory(); i++) {
+                ItemStack itemstack = tileentity.getStackInSlot(i);
 
-					while (itemstack.stackSize > 0) {
-						int j = this.rand.nextInt(21) + 10;
+                if (itemstack != null && !(i == 0)) {
+                    float f = this.rand.nextFloat() * 0.8F + 0.1F;
+                    float f1 = this.rand.nextFloat() * 0.8F + 0.1F;
+                    float f2 = this.rand.nextFloat() * 0.8F + 0.1F;
 
-						if (j > itemstack.stackSize) {
-							j = itemstack.stackSize;
-						}
+                    while (itemstack.stackSize > 0) {
+                        int j = this.rand.nextInt(21) + 10;
 
-						itemstack.stackSize -= j;
+                        if (j > itemstack.stackSize) {
+                            j = itemstack.stackSize;
+                        }
 
-						EntityItem item = new EntityItem(world, x + f, y + f1, z + f2, new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
+                        itemstack.stackSize -= j;
 
-						if (itemstack.hasTagCompound()) {
-							item.getEntityItem().setTagCompound((NBTTagCompound) itemstack.getTagCompound().copy());
-						}
+                        EntityItem item = new EntityItem(
+                            world,
+                            x + f,
+                            y + f1,
+                            z + f2,
+                            new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
 
-						world.spawnEntityInWorld(item);
-					}
-				}
-			}
+                        if (itemstack.hasTagCompound()) {
+                            item.getEntityItem()
+                                .setTagCompound(
+                                    (NBTTagCompound) itemstack.getTagCompound()
+                                        .copy());
+                        }
 
-			world.func_147453_f(x, y, z, oldblock);
-		}
+                        world.spawnEntityInWorld(item);
+                    }
+                }
+            }
 
-		super.breakBlock(world, x, y, z, oldblock, oldMetadata);
-		world.removeTileEntity(x, y, z);
+            world.func_147453_f(x, y, z, oldblock);
+        }
 
-	}
+        super.breakBlock(world, x, y, z, oldblock, oldMetadata);
+        world.removeTileEntity(x, y, z);
+
+    }
 }

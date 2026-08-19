@@ -12,36 +12,49 @@ import sonar.calculator.mod.common.tileentity.generators.TileEntityCrankedGenera
 import sonar.core.helpers.FontHelper;
 
 public class GuiCrankedGenerator extends GuiContainer {
-	public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/guicrank.png");
 
-	public TileEntityCrankedGenerator entity;
+    public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/guicrank.png");
 
-	public GuiCrankedGenerator(InventoryPlayer inventoryPlayer, TileEntityCrankedGenerator entity) {
-		super(new ContainerCrankedGenerator(inventoryPlayer, entity));
-		this.entity = entity;
-	}
+    public TileEntityCrankedGenerator entity;
 
-	@Override
-	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-		FontHelper.textCentre(FontHelper.translate("tile.CrankedGenerator.name"), this.xSize, 6, 0);
-		if (this.entity.cranked()) {
-			FontHelper.textCentre(FontHelper.translate(FontHelper.translate("crank.cranked") + ": " + FontHelper.translate("locator.true")), this.xSize, 25, 0);
-		}
-		if (!this.entity.cranked()) {
-			FontHelper.textCentre(FontHelper.translate(FontHelper.translate("crank.cranked") + ": " + FontHelper.translate("locator.false")), this.xSize, 25, 0);
+    public GuiCrankedGenerator(InventoryPlayer inventoryPlayer, TileEntityCrankedGenerator entity) {
+        super(new ContainerCrankedGenerator(inventoryPlayer, entity));
+        this.entity = entity;
+    }
 
-		}
-		FontHelper.textCentre(FontHelper.formatStorage(entity.storage.getEnergyStored()), this.xSize, 64, 2);
-	}
+    @Override
+    public void drawGuiContainerForegroundLayer(int par1, int par2) {
+        FontHelper.textCentre(FontHelper.translate("tile.CrankedGenerator.name"), this.xSize, 6, 0);
+        if (this.entity.cranked()) {
+            FontHelper.textCentre(
+                FontHelper
+                    .translate(FontHelper.translate("crank.cranked") + ": " + FontHelper.translate("locator.true")),
+                this.xSize,
+                25,
+                0);
+        }
+        if (!this.entity.cranked()) {
+            FontHelper.textCentre(
+                FontHelper
+                    .translate(FontHelper.translate("crank.cranked") + ": " + FontHelper.translate("locator.false")),
+                this.xSize,
+                25,
+                0);
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(bground);
-		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        }
+        FontHelper.textCentre(FontHelper.formatStorage(entity.storage.getEnergyStored()), this.xSize, 64, 2);
+    }
 
-		int k = this.entity.storage.getEnergyStored() * 78 / 1000;
-		int j = 78 - k;
-		drawTexturedModalRect(this.guiLeft + 49, this.guiTop + 63, 176, 0, k, 10);
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(bground);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+
+        int k = this.entity.storage.getEnergyStored() * 78 / 1000;
+        int j = 78 - k;
+        drawTexturedModalRect(this.guiLeft + 49, this.guiTop + 63, 176, 0, k, 10);
+    }
 }

@@ -8,28 +8,31 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import sonar.calculator.mod.common.containers.ContainerStorageModule;
 import sonar.calculator.mod.common.item.modules.StorageModule;
 import sonar.core.helpers.FontHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GuiStorageModule extends GuiContainer {
-	private static final ResourceLocation texture = new ResourceLocation("textures/gui/container/generic_54.png");
 
-	public GuiStorageModule(EntityPlayer player, InventoryPlayer inv, StorageModule.StorageInventory inventory) { 
-		super(new ContainerStorageModule(player, inv, inventory));
+    private static final ResourceLocation texture = new ResourceLocation("textures/gui/container/generic_54.png");
+
+    public GuiStorageModule(EntityPlayer player, InventoryPlayer inv, StorageModule.StorageInventory inventory) {
+        super(new ContainerStorageModule(player, inv, inventory));
         this.ySize = 222;
     }
-	
-	protected void drawGuiContainerForegroundLayer(int x,int y) {
-		  FontHelper.textCentre(FontHelper.translate("item.StorageModule.name"), xSize, 6, 0);
-	}
 
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-	    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-	    Minecraft.getMinecraft().getTextureManager().bindTexture(this.texture);	    
-	    drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	}
+    protected void drawGuiContainerForegroundLayer(int x, int y) {
+        FontHelper.textCentre(FontHelper.translate("item.StorageModule.name"), xSize, 6, 0);
+    }
+
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(this.texture);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
 }

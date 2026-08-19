@@ -12,41 +12,45 @@ import sonar.calculator.mod.common.tileentity.generators.TileEntityCalculatorPlu
 import sonar.core.helpers.FontHelper;
 
 public class GuiCalculatorPlug extends GuiContainer {
-	public static final ResourceLocation bground = new ResourceLocation("Calculator:textures/gui/guicalculatorplug.png");
 
-	public TileEntityCalculatorPlug entity;
+    public static final ResourceLocation bground = new ResourceLocation(
+        "Calculator:textures/gui/guicalculatorplug.png");
 
-	public GuiCalculatorPlug(InventoryPlayer inventoryPlayer, TileEntityCalculatorPlug entity) {
-		super(new ContainerCalculatorPlug(inventoryPlayer, entity));
+    public TileEntityCalculatorPlug entity;
 
-		this.entity = entity;
+    public GuiCalculatorPlug(InventoryPlayer inventoryPlayer, TileEntityCalculatorPlug entity) {
+        super(new ContainerCalculatorPlug(inventoryPlayer, entity));
 
-		this.xSize = 176;
-		this.ySize = 166;
-	}
+        this.entity = entity;
 
-	@Override
-	public void drawGuiContainerForegroundLayer(int par1, int par2) {
-		FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
-		FontHelper.textCentre(getString(entity.stable.getObject()), xSize, 60, 0);
-	}
+        this.xSize = 176;
+        this.ySize = 166;
+    }
 
-	public static String getString(int stable) {
-		switch (stable) {
-		case 0:
-			return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("circuit.noStability");
-		case 1:
-			return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.false");
-		case 2:
-			return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.true");
-		}
-		return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.unknown");
-	}
+    @Override
+    public void drawGuiContainerForegroundLayer(int par1, int par2) {
+        FontHelper.textCentre(FontHelper.translate(entity.getInventoryName()), xSize, 6, 0);
+        FontHelper.textCentre(getString(entity.stable.getObject()), xSize, 60, 0);
+    }
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		Minecraft.getMinecraft().getTextureManager().bindTexture(bground);
-		drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	}
+    public static String getString(int stable) {
+        switch (stable) {
+            case 0:
+                return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("circuit.noStability");
+            case 1:
+                return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.false");
+            case 2:
+                return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.true");
+        }
+        return FontHelper.translate("circuit.stable") + ": " + FontHelper.translate("locator.unknown");
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft()
+            .getTextureManager()
+            .bindTexture(bground);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+    }
 }

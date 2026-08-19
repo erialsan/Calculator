@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.TileEntityFlux;
 import sonar.calculator.mod.common.tileentity.TileEntityFluxHandler;
@@ -27,74 +28,77 @@ import sonar.core.utils.BlockInteraction;
 
 public class FluxPlug extends SonarMachineBlock {
 
-	private Random rand = new Random();
+    private Random rand = new Random();
 
-	public FluxPlug() {
-		super(SonarMaterials.machine);
-		this.disableOrientation();
-		this.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
-	}
+    public FluxPlug() {
+        super(SonarMaterials.machine);
+        this.disableOrientation();
+        this.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.75F, 0.75F);
+    }
 
-	@Override
-	public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
-		if (player != null) {
-			if (!world.isRemote) {
+    @Override
+    public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
+        if (player != null) {
+            if (!world.isRemote) {
 
-				TileEntity target = world.getTileEntity(x, y, z);
-				if (target != null && target instanceof TileEntityFlux) {
-					TileEntityFlux plug = (TileEntityFlux) target;
-					NBTTagCompound tag = new NBTTagCompound();
-					plug.writeToNBT(tag);
-					Calculator.network.sendTo(new PacketTileSync(x, y, z, tag),(EntityPlayerMP) player);
-					List<FluxNetwork> networks = FluxRegistry.getAvailableNetworks(player.getGameProfile().getName(), null);
-					Calculator.network.sendTo(new PacketFluxNetworkList(x, y, z, networks), (EntityPlayerMP) player);
-					player.openGui(Calculator.instance, CalculatorGui.FluxPlug, world, x, y, z);
+                TileEntity target = world.getTileEntity(x, y, z);
+                if (target != null && target instanceof TileEntityFlux) {
+                    TileEntityFlux plug = (TileEntityFlux) target;
+                    NBTTagCompound tag = new NBTTagCompound();
+                    plug.writeToNBT(tag);
+                    Calculator.network.sendTo(new PacketTileSync(x, y, z, tag), (EntityPlayerMP) player);
+                    List<FluxNetwork> networks = FluxRegistry.getAvailableNetworks(
+                        player.getGameProfile()
+                            .getName(),
+                        null);
+                    Calculator.network.sendTo(new PacketFluxNetworkList(x, y, z, networks), (EntityPlayerMP) player);
+                    player.openGui(Calculator.instance, CalculatorGui.FluxPlug, world, x, y, z);
 
-				}
-			}
-		}
-		return true;
-	}
+                }
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
-		TileEntity tileentity = world.getTileEntity(x, y, z);
-		if (tileentity != null && tileentity instanceof TileEntityFluxHandler) {
-			TileEntityFluxHandler flux = (TileEntityFluxHandler) world.getTileEntity(x, y, z);
-			flux.updateAdjacentHandlers();
-		}
+    @Override
+    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
+        TileEntity tileentity = world.getTileEntity(x, y, z);
+        if (tileentity != null && tileentity instanceof TileEntityFluxHandler) {
+            TileEntityFluxHandler flux = (TileEntityFluxHandler) world.getTileEntity(x, y, z);
+            flux.updateAdjacentHandlers();
+        }
 
-	}
+    }
 
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemstack) {
-		super.onBlockPlacedBy(world, x, y, z, player, itemstack);
-		TileEntity target = world.getTileEntity(x, y, z);
-		if (target != null && target instanceof TileEntityFluxHandler) {
-			TileEntityFluxHandler flux = (TileEntityFluxHandler) target;
-			flux.updateAdjacentHandlers();
-			if (player != null && player instanceof EntityPlayer) {
-				flux.setPlayer((EntityPlayer) player);
-			}
-		}
-	}
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemstack) {
+        super.onBlockPlacedBy(world, x, y, z, player, itemstack);
+        TileEntity target = world.getTileEntity(x, y, z);
+        if (target != null && target instanceof TileEntityFluxHandler) {
+            TileEntityFluxHandler flux = (TileEntityFluxHandler) target;
+            flux.updateAdjacentHandlers();
+            if (player != null && player instanceof EntityPlayer) {
+                flux.setPlayer((EntityPlayer) player);
+            }
+        }
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityFluxPlug();
-	}
-	
-	public boolean hasSpecialRenderer() {
-		return true;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2) {
+        return new TileEntityFluxPlug();
+    }
 
-	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
-		CalculatorHelper.addEnergytoToolTip(stack, player, list);
-	}
+    public boolean hasSpecialRenderer() {
+        return true;
+    }
 
-	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		list.add("Sends Energy");
-	}
+    @Override
+    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+        CalculatorHelper.addEnergytoToolTip(stack, player, list);
+    }
+
+    @Override
+    public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
+        list.add("Sends Energy");
+    }
 }

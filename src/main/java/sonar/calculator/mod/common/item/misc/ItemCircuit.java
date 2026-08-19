@@ -12,177 +12,196 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import sonar.calculator.mod.api.items.IStability;
-import sonar.core.common.item.SonarItem;
-import sonar.core.helpers.FontHelper;
 
 import com.google.common.collect.Maps;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import sonar.calculator.mod.api.items.IStability;
+import sonar.core.common.item.SonarItem;
+import sonar.core.helpers.FontHelper;
 
 public class ItemCircuit extends SonarItem implements IStability {
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean par4) {
-		super.addInformation(stack, player, list, par4);
-		if (stack.hasTagCompound()) {
-			int stable = stack.getTagCompound().getInteger("Stable");
-			if (stable == 1) {
-				list.add(FontHelper.translate("circuit.stable"));
-			} else {
-				NBTTagCompound tag = new NBTTagCompound();
-				tag.setInteger("Stable", 0);
-				tag.setInteger("Item1", 0);
-				tag.setInteger("Item2", 0);
-				tag.setInteger("Item3", 0);
-				tag.setInteger("Item4", 0);
-				tag.setInteger("Item5", 0);
-				tag.setInteger("Item6", 0);
-				tag.setInteger("Energy", 0);
-				ItemStack analysed = new ItemStack(stack.getItem(), 1, stack.getItemDamage());
-				analysed.setTagCompound(tag);
-				if (ItemStack.areItemStackTagsEqual(analysed, stack)) {
-					list.add(FontHelper.translate("circuit.analysed"));
-				}
-			}
-		}
-	}
 
-	public static void setData(ItemStack stack) {
-		NBTTagCompound nbtData = stack.getTagCompound();
-		if (stack != null) {
-			if (nbtData == null) {
-				int energy = 1 + (int) (Math.random() * 200.0D);
-				int item1 = 1 + (int) (Math.random() * 50.0D);
-				int item2 = 1 + (int) (Math.random() * 100.0D);
-				int item3 = 1 + (int) (Math.random() * 1000.0D);
-				int item4 = 1 + (int) (Math.random() * 2000.0D);
-				int item5 = 1 + (int) (Math.random() * 10000.0D);
-				int item6 = 1 + (int) (Math.random() * 20000.0D);
-				int stable = 1 + (int) (Math.random() * 6.0D);
-				nbtData = new NBTTagCompound();
-				nbtData.setInteger("Energy", energy);
-				nbtData.setInteger("Item1", item1);
-				nbtData.setInteger("Item2", item2);
-				nbtData.setInteger("Item3", item3);
-				nbtData.setInteger("Item4", item4);
-				nbtData.setInteger("Item5", item5);
-				nbtData.setInteger("Item6", item6);
-				nbtData.setInteger("Stable", stable);
-				stack.setTagCompound(nbtData);
-			}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean par4) {
+        super.addInformation(stack, player, list, par4);
+        if (stack.hasTagCompound()) {
+            int stable = stack.getTagCompound()
+                .getInteger("Stable");
+            if (stable == 1) {
+                list.add(FontHelper.translate("circuit.stable"));
+            } else {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setInteger("Stable", 0);
+                tag.setInteger("Item1", 0);
+                tag.setInteger("Item2", 0);
+                tag.setInteger("Item3", 0);
+                tag.setInteger("Item4", 0);
+                tag.setInteger("Item5", 0);
+                tag.setInteger("Item6", 0);
+                tag.setInteger("Energy", 0);
+                ItemStack analysed = new ItemStack(stack.getItem(), 1, stack.getItemDamage());
+                analysed.setTagCompound(tag);
+                if (ItemStack.areItemStackTagsEqual(analysed, stack)) {
+                    list.add(FontHelper.translate("circuit.analysed"));
+                }
+            }
+        }
+    }
 
-		}
-	}
+    public static void setData(ItemStack stack) {
+        NBTTagCompound nbtData = stack.getTagCompound();
+        if (stack != null) {
+            if (nbtData == null) {
+                int energy = 1 + (int) (Math.random() * 200.0D);
+                int item1 = 1 + (int) (Math.random() * 50.0D);
+                int item2 = 1 + (int) (Math.random() * 100.0D);
+                int item3 = 1 + (int) (Math.random() * 1000.0D);
+                int item4 = 1 + (int) (Math.random() * 2000.0D);
+                int item5 = 1 + (int) (Math.random() * 10000.0D);
+                int item6 = 1 + (int) (Math.random() * 20000.0D);
+                int stable = 1 + (int) (Math.random() * 6.0D);
+                nbtData = new NBTTagCompound();
+                nbtData.setInteger("Energy", energy);
+                nbtData.setInteger("Item1", item1);
+                nbtData.setInteger("Item2", item2);
+                nbtData.setInteger("Item3", item3);
+                nbtData.setInteger("Item4", item4);
+                nbtData.setInteger("Item5", item5);
+                nbtData.setInteger("Item6", item6);
+                nbtData.setInteger("Stable", stable);
+                stack.setTagCompound(nbtData);
+            }
 
-	public void onUpdate(ItemStack stack, World world, Entity entity, int par, boolean bool) {
-		if (stack.getTagCompound() == null && !stack.hasTagCompound()) {
-			setData(stack);
-		}
-	}
+        }
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister register) {
-		CircuitType[] atype = CircuitType.values();
-		int i = atype.length;
+    public void onUpdate(ItemStack stack, World world, Entity entity, int par, boolean bool) {
+        if (stack.getTagCompound() == null && !stack.hasTagCompound()) {
+            setData(stack);
+        }
+    }
 
-		for (int j = 0; j < i; j++) {
-			CircuitType type = atype[j];
-			type.registerIcon(register);
-		}
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister register) {
+        CircuitType[] atype = CircuitType.values();
+        int i = atype.length;
 
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamage(int p_77617_1_) {
-		CircuitType type = CircuitType.getTypeFromDamage(p_77617_1_);
-		return type.getIcon();
-	}
+        for (int j = 0; j < i; j++) {
+            CircuitType type = atype[j];
+            type.registerIcon(register);
+        }
+    }
 
-	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, List list) {
-		CircuitType[] atype = CircuitType.values();
-		int i = atype.length;
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int p_77617_1_) {
+        CircuitType type = CircuitType.getTypeFromDamage(p_77617_1_);
+        return type.getIcon();
+    }
 
-		for (int j = 0; j < i; j++) {
-			CircuitType type = atype[j];
+    @SideOnly(Side.CLIENT)
+    public void getSubItems(Item item, CreativeTabs tab, List list) {
+        CircuitType[] atype = CircuitType.values();
+        int i = atype.length;
 
-			list.add(new ItemStack(this, 1, type.getItemDamage()));
-		}
-	}
+        for (int j = 0; j < i; j++) {
+            CircuitType type = atype[j];
 
-	public String getUnlocalizedName(ItemStack stack) {
-		CircuitType type = CircuitType.getTypeFromStack(stack);
-		return getUnlocalizedName() + "." + type.name();
-	}
+            list.add(new ItemStack(this, 1, type.getItemDamage()));
+        }
+    }
 
-	public static enum CircuitType {
-		C1(0, "1"), C2(1, "2"), C3(2, "3"), C4(3, "4"), C5(4, "5"), C6(5, "6"), C7(6, "7"), C8(7, "8"), C9(8, "9"), C10(9, "10"), C11(10, "11"), C12(11, "12"), C13(12, "13"), C14(13, "14");
+    public String getUnlocalizedName(ItemStack stack) {
+        CircuitType type = CircuitType.getTypeFromStack(stack);
+        return getUnlocalizedName() + "." + type.name();
+    }
 
-		private static final Map circuits;
-		private final int number;
-		private final String name;
-		@SideOnly(Side.CLIENT)
-		private IIcon icon;
+    public static enum CircuitType {
 
-		private CircuitType(int number, String name) {
-			this.number = number;
-			this.name = name;
-		}
+        C1(0, "1"),
+        C2(1, "2"),
+        C3(2, "3"),
+        C4(3, "4"),
+        C5(4, "5"),
+        C6(5, "6"),
+        C7(6, "7"),
+        C8(7, "8"),
+        C9(8, "9"),
+        C10(9, "10"),
+        C11(10, "11"),
+        C12(11, "12"),
+        C13(12, "13"),
+        C14(13, "14");
 
-		public int getItemDamage() {
-			return this.number;
-		}
+        private static final Map circuits;
+        private final int number;
+        private final String name;
+        @SideOnly(Side.CLIENT)
+        private IIcon icon;
 
-		public String getUnlocalizedNamePart() {
-			return this.name;
-		}
+        private CircuitType(int number, String name) {
+            this.number = number;
+            this.name = name;
+        }
 
-		@SideOnly(Side.CLIENT)
-		public void registerIcon(IIconRegister register) {
-			this.icon = register.registerIcon("Calculator:circuits/circuit" + this.name);
-		}
+        public int getItemDamage() {
+            return this.number;
+        }
 
-		@SideOnly(Side.CLIENT)
-		public IIcon getIcon() {
-			return this.icon;
-		}
+        public String getUnlocalizedNamePart() {
+            return this.name;
+        }
 
-		public static CircuitType getTypeFromDamage(int par) {
-			CircuitType type = (CircuitType) circuits.get(Integer.valueOf(par));
-			return type == null ? C1 : type;
-		}
+        @SideOnly(Side.CLIENT)
+        public void registerIcon(IIconRegister register) {
+            this.icon = register.registerIcon("Calculator:circuits/circuit" + this.name);
+        }
 
-		public static CircuitType getTypeFromStack(ItemStack stack) {
-			return (stack.getItem() instanceof ItemCircuit) ? getTypeFromDamage(stack.getItemDamage()) : C1;
-		}
+        @SideOnly(Side.CLIENT)
+        public IIcon getIcon() {
+            return this.icon;
+        }
 
-		static {
-			circuits = Maps.newHashMap();
+        public static CircuitType getTypeFromDamage(int par) {
+            CircuitType type = (CircuitType) circuits.get(Integer.valueOf(par));
+            return type == null ? C1 : type;
+        }
 
-			CircuitType[] var0 = values();
-			int var1 = var0.length;
+        public static CircuitType getTypeFromStack(ItemStack stack) {
+            return (stack.getItem() instanceof ItemCircuit) ? getTypeFromDamage(stack.getItemDamage()) : C1;
+        }
 
-			for (int var2 = 0; var2 < var1; var2++) {
-				CircuitType var3 = var0[var2];
-				circuits.put(Integer.valueOf(var3.getItemDamage()), var3);
-			}
-		}
-	}
+        static {
+            circuits = Maps.newHashMap();
 
-	@Override
-	public boolean getStability(ItemStack stack) {
-		if (stack.hasTagCompound()) {
-			return stack.getTagCompound().getInteger("Stable") == 1;
-		} else {
-			this.setData(stack);
-			return stack.getTagCompound().getInteger("Stable") == 1;
-		}
-	}
+            CircuitType[] var0 = values();
+            int var1 = var0.length;
 
-	@Override
-	public void onFalse(ItemStack stack) {
-		stack.getTagCompound().setInteger("Stable", 0);
-	}
+            for (int var2 = 0; var2 < var1; var2++) {
+                CircuitType var3 = var0[var2];
+                circuits.put(Integer.valueOf(var3.getItemDamage()), var3);
+            }
+        }
+    }
+
+    @Override
+    public boolean getStability(ItemStack stack) {
+        if (stack.hasTagCompound()) {
+            return stack.getTagCompound()
+                .getInteger("Stable") == 1;
+        } else {
+            this.setData(stack);
+            return stack.getTagCompound()
+                .getInteger("Stable") == 1;
+        }
+    }
+
+    @Override
+    public void onFalse(ItemStack stack) {
+        stack.getTagCompound()
+            .setInteger("Stable", 0);
+    }
 }

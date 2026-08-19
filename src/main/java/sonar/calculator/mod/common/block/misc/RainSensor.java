@@ -7,54 +7,56 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import sonar.calculator.mod.Calculator;
-import sonar.calculator.mod.common.tileentity.misc.TileEntityRainSensor;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import sonar.calculator.mod.Calculator;
+import sonar.calculator.mod.common.tileentity.misc.TileEntityRainSensor;
 
 public class RainSensor extends BlockContainer {
-	private IIcon[] icons = new IIcon[3];
 
-	public RainSensor() {
-		super(Material.wood);
-		this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
-	}
+    private IIcon[] icons = new IIcon[3];
 
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
-	}
+    public RainSensor() {
+        super(Material.wood);
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
+    }
 
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
-		return world.getBlockMetadata(x, y, z);
-	}
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+        this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.375F, 1.0F);
+    }
 
-	public boolean canProvidePower() {
-		return true;
-	}
+    public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int side) {
+        return world.getBlockMetadata(x, y, z);
+    }
 
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta) {
-		return side == 1 ? meta == 15 ? this.icons[1] : this.icons[0] : this.icons[2];
-	}
+    public boolean canProvidePower() {
+        return true;
+    }
 
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister register) {
-		this.icons[0] = register.registerIcon(Calculator.modid + ":rain_sensor_top");
-		this.icons[1] = register.registerIcon(Calculator.modid + ":rain_sensor_top_on");
-		this.icons[2] = register.registerIcon(Calculator.modid + ":rain_sensor_bottom");
-	}
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int meta) {
+        return side == 1 ? meta == 15 ? this.icons[1] : this.icons[0] : this.icons[2];
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		return new TileEntityRainSensor();
-	}
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister register) {
+        this.icons[0] = register.registerIcon(Calculator.modid + ":rain_sensor_top");
+        this.icons[1] = register.registerIcon(Calculator.modid + ":rain_sensor_top_on");
+        this.icons[2] = register.registerIcon(Calculator.modid + ":rain_sensor_bottom");
+    }
 
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        return new TileEntityRainSensor();
+    }
 
-	public boolean isOpaqueCube() {
-		return false;
-	}
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
 }

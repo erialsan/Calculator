@@ -12,80 +12,83 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import cofh.api.block.IDismantleable;
 import sonar.calculator.mod.Calculator;
 import sonar.core.helpers.SonarHelper;
-import cofh.api.block.IDismantleable;
 
 public class ScarecrowBlock extends Block implements IDismantleable {
-	
-	public ScarecrowBlock() {
-		super(Material.cloth);
-	}
 
-	@Override
-	public int getRenderType() {
-		return -1;
-	}
+    public ScarecrowBlock() {
+        super(Material.cloth);
+    }
 
-	@Override
-	public boolean isOpaqueCube() {
-		return false;
-	}
+    @Override
+    public int getRenderType() {
+        return -1;
+    }
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
-		world.setBlockToAir(x, y, z);
-		if (world.getBlock(x, y - 1, z) == Calculator.scarecrow) {
-			TileEntity i = world.getTileEntity(x, y - 1, z);
-			Block bi = world.getBlock(x, y - 1, z);
-			bi.dropBlockAsItem(world, x, y - 1, z, world.getBlockMetadata(x, y - 1, z), 0);
-			world.setBlockToAir(x, y - 1, z);
-		} else if (world.getBlock(x, y - 2, z) == Calculator.scarecrow) {
-			TileEntity i = world.getTileEntity(x, y - 2, z);
-			Block bi = world.getBlock(x, y - 2, z);
-			bi.dropBlockAsItem(world, x, y - 2, z, world.getBlockMetadata(x, y - 2, z), 0);
-			world.setBlockToAir(x, y - 2, z);
-		}
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 
-	}
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block oldblock, int oldMetadata) {
+        world.setBlockToAir(x, y, z);
+        if (world.getBlock(x, y - 1, z) == Calculator.scarecrow) {
+            TileEntity i = world.getTileEntity(x, y - 1, z);
+            Block bi = world.getBlock(x, y - 1, z);
+            bi.dropBlockAsItem(world, x, y - 1, z, world.getBlockMetadata(x, y - 1, z), 0);
+            world.setBlockToAir(x, y - 1, z);
+        } else if (world.getBlock(x, y - 2, z) == Calculator.scarecrow) {
+            TileEntity i = world.getTileEntity(x, y - 2, z);
+            Block bi = world.getBlock(x, y - 2, z);
+            bi.dropBlockAsItem(world, x, y - 2, z, world.getBlockMetadata(x, y - 2, z), 0);
+            world.setBlockToAir(x, y - 2, z);
+        }
 
-	@Override
-	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		int metadata = world.getBlockMetadata(x, y, z);
-		ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z)).getOpposite();
+    }
 
-		if (world.getBlock(x, y - 2, z) == Calculator.scarecrow) {
-			setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.6F, 1.0F);
-		}
-		if (world.getBlock(x, y - 1, z) == Calculator.scarecrow) {
-			setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-		}
-	}
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+        int metadata = world.getBlockMetadata(x, y, z);
+        ForgeDirection dir = ForgeDirection.getOrientation(world.getBlockMetadata(x, y, z))
+            .getOpposite();
 
-	@Override
-	public int quantityDropped(Random p_149745_1_) {
-		return 0;
-	}
+        if (world.getBlock(x, y - 2, z) == Calculator.scarecrow) {
+            setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.6F, 1.0F);
+        }
+        if (world.getBlock(x, y - 1, z) == Calculator.scarecrow) {
+            setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
 
-	@Override
-	public Item getItem(World world, int x, int y, int z) {
-		return null;
-	}
+    @Override
+    public int quantityDropped(Random p_149745_1_) {
+        return 0;
+    }
 
-	@Override
-	public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z, boolean returnDrops) {
+    @Override
+    public Item getItem(World world, int x, int y, int z) {
+        return null;
+    }
 
-		SonarHelper.dropTile(player, world.getBlock(x, y, z), world, x, y, z);
-		return null;
-	}
+    @Override
+    public ArrayList<ItemStack> dismantleBlock(EntityPlayer player, World world, int x, int y, int z,
+        boolean returnDrops) {
 
-	@Override
-	public boolean canDismantle(EntityPlayer player, World world, int x, int y, int z) {
-		return true;
-	}
+        SonarHelper.dropTile(player, world.getBlock(x, y, z), world, x, y, z);
+        return null;
+    }
+
+    @Override
+    public boolean canDismantle(EntityPlayer player, World world, int x, int y, int z) {
+        return true;
+    }
 }

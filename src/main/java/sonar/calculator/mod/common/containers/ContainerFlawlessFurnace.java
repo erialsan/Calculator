@@ -4,107 +4,111 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import sonar.calculator.mod.common.tileentity.machines.TileEntityFlawlessFurnace;
 import sonar.calculator.mod.utils.helpers.CalculatorHelper;
 import sonar.core.inventory.ContainerSync;
 import sonar.core.inventory.slots.SlotBlockedInventory;
 
 public class ContainerFlawlessFurnace extends ContainerSync {
-	private TileEntityFlawlessFurnace entity;
 
-	private static final int INV_START = 28, INV_END = INV_START + 26, HOTBAR_START = INV_END + 1, HOTBAR_END = HOTBAR_START + 8;
+    private TileEntityFlawlessFurnace entity;
 
-	public ContainerFlawlessFurnace(InventoryPlayer inventory, TileEntityFlawlessFurnace entity) {
-		super(entity);
-		this.entity = entity;
+    private static final int INV_START = 28, INV_END = INV_START + 26, HOTBAR_START = INV_END + 1,
+        HOTBAR_END = HOTBAR_START + 8;
 
-		int slotID = 0;
+    public ContainerFlawlessFurnace(InventoryPlayer inventory, TileEntityFlawlessFurnace entity) {
+        super(entity);
+        this.entity = entity;
 
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				addSlotToContainer(new Slot(entity, slotID, 14 + j * 56, 27 + i * 40));
-				slotID++;
-			}
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				addSlotToContainer(new SlotBlockedInventory(entity, slotID, 38 + j * 56, 19 + i * 40));
-				slotID++;
-			}
-		}
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				addSlotToContainer(new SlotBlockedInventory(entity, slotID, 38 + j * 56, 39 + i * 40));
-				slotID++;
-			}
-		}
-		addSlotToContainer(new Slot(entity, slotID, 28, 139));
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 9; j++) {
-				addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 160 + i * 18));
-			}
-		}
+        int slotID = 0;
 
-		for (int i = 0; i < 9; i++) {
-			addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 218));
-		}
-	}
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                addSlotToContainer(new Slot(entity, slotID, 14 + j * 56, 27 + i * 40));
+                slotID++;
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                addSlotToContainer(new SlotBlockedInventory(entity, slotID, 38 + j * 56, 19 + i * 40));
+                slotID++;
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                addSlotToContainer(new SlotBlockedInventory(entity, slotID, 38 + j * 56, 39 + i * 40));
+                slotID++;
+            }
+        }
+        addSlotToContainer(new Slot(entity, slotID, 28, 139));
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 9; j++) {
+                addSlotToContainer(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 160 + i * 18));
+            }
+        }
 
-	public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
-		ItemStack itemstack = null;
-		Slot slot = (Slot) this.inventorySlots.get(slotID);
-		if (slot != null && slot.getHasStack()) {
-			ItemStack itemstack1 = slot.getStack();
-			itemstack = itemstack1.copy();
+        for (int i = 0; i < 9; i++) {
+            addSlotToContainer(new Slot(inventory, i, 8 + i * 18, 218));
+        }
+    }
 
-			if (slotID < INV_START) {
-				if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, true)) {
-					return null;
-				}
+    public ItemStack transferStackInSlot(EntityPlayer player, int slotID) {
+        ItemStack itemstack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotID);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack itemstack1 = slot.getStack();
+            itemstack = itemstack1.copy();
 
-				slot.onSlotChange(itemstack1, itemstack);
-			} else {
+            if (slotID < INV_START) {
+                if (!this.mergeItemStack(itemstack1, INV_START, HOTBAR_END + 1, true)) {
+                    return null;
+                }
 
-				if (slotID >= INV_START) {
-					if (entity.recipeHelper().validInput(itemstack1)) {
-						if (!this.mergeItemStack(itemstack1, 0, INV_START - 18 + 1, false)) {
-							return null;
-						}
-					} else if (CalculatorHelper.canProvideEnergy(itemstack1)){
-						if (!mergeItemStack(itemstack1, 27, 28, false)) {
-							return null;
-						}
-					} 
-				} else if (slotID >= INV_START && slotID < HOTBAR_START) {
-					if (!this.mergeItemStack(itemstack1, HOTBAR_START, HOTBAR_END + 1, false)) {
-						return null;
-					}
-				} else if (slotID >= HOTBAR_START && slotID < HOTBAR_END + 1) {
-					if (!this.mergeItemStack(itemstack1, INV_START, INV_END + 1, false)) {
-						return null;
-					}
-				}
-			}
+                slot.onSlotChange(itemstack1, itemstack);
+            } else {
 
-			if (itemstack1.stackSize == 0) {
-				slot.putStack((ItemStack) null);
-			} else {
-				slot.onSlotChanged();
-			}
+                if (slotID >= INV_START) {
+                    if (entity.recipeHelper()
+                        .validInput(itemstack1)) {
+                        if (!this.mergeItemStack(itemstack1, 0, INV_START - 18 + 1, false)) {
+                            return null;
+                        }
+                    } else if (CalculatorHelper.canProvideEnergy(itemstack1)) {
+                        if (!mergeItemStack(itemstack1, 27, 28, false)) {
+                            return null;
+                        }
+                    }
+                } else if (slotID >= INV_START && slotID < HOTBAR_START) {
+                    if (!this.mergeItemStack(itemstack1, HOTBAR_START, HOTBAR_END + 1, false)) {
+                        return null;
+                    }
+                } else if (slotID >= HOTBAR_START && slotID < HOTBAR_END + 1) {
+                    if (!this.mergeItemStack(itemstack1, INV_START, INV_END + 1, false)) {
+                        return null;
+                    }
+                }
+            }
 
-			if (itemstack1.stackSize == itemstack.stackSize) {
-				return null;
-			}
+            if (itemstack1.stackSize == 0) {
+                slot.putStack((ItemStack) null);
+            } else {
+                slot.onSlotChanged();
+            }
 
-			slot.onPickupFromSlot(player, itemstack1);
-		}
+            if (itemstack1.stackSize == itemstack.stackSize) {
+                return null;
+            }
 
-		return itemstack;
-	}
+            slot.onPickupFromSlot(player, itemstack1);
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return entity.isUseableByPlayer(player);
-	}
+        return itemstack;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return entity.isUseableByPlayer(player);
+    }
 
 }

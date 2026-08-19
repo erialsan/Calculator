@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import sonar.calculator.mod.Calculator;
 import sonar.calculator.mod.common.tileentity.TileEntityFluxHandler;
 import sonar.calculator.mod.common.tileentity.misc.TileEntityFluxPoint;
@@ -25,78 +26,87 @@ import sonar.core.utils.BlockInteraction;
 
 public class FluxPoint extends SonarMachineBlock {
 
-	private Random rand = new Random();
+    private Random rand = new Random();
 
-	public FluxPoint() {
-		super(SonarMaterials.machine);
-		this.disableOrientation();
-		this.setBlockBounds(0.375F, 0.375F, 0.375F, 0.625F, 0.625F, 0.625F);
-	}
+    public FluxPoint() {
+        super(SonarMaterials.machine);
+        this.disableOrientation();
+        this.setBlockBounds(0.375F, 0.375F, 0.375F, 0.625F, 0.625F, 0.625F);
+    }
 
+    @Override
+    public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
+        if (player != null) {
+            if (!world.isRemote) {
+                TileEntity target = world.getTileEntity(x, y, z);
+                if (target != null && target instanceof TileEntityFluxPoint) {
+                    TileEntityFluxPoint point = (TileEntityFluxPoint) target;
+                    NBTTagCompound tag = new NBTTagCompound();
+                    point.writeToNBT(tag);
+                    Calculator.network.sendTo(new PacketTileSync(x, y, z, tag), (EntityPlayerMP) player);
+                    Calculator.network.sendTo(
+                        new PacketFluxNetworkList(
+                            x,
+                            y,
+                            z,
+                            FluxRegistry.getAvailableNetworks(
+                                player.getGameProfile()
+                                    .getName(),
+                                null)),
+                        (EntityPlayerMP) player);
+                    player.openGui(Calculator.instance, CalculatorGui.FluxPoint, world, x, y, z);
+                }
+            }
+        }
+        return true;
+    }
 
-	@Override
-	public boolean operateBlock(World world, int x, int y, int z, EntityPlayer player, BlockInteraction interact) {
-		if (player != null) {
-			if (!world.isRemote) {
-				TileEntity target = world.getTileEntity(x, y, z);
-				if (target != null && target instanceof TileEntityFluxPoint) {
-					TileEntityFluxPoint point = (TileEntityFluxPoint) target;
-					NBTTagCompound tag = new NBTTagCompound();
-					point.writeToNBT(tag);
-					Calculator.network.sendTo(new PacketTileSync(x, y, z, tag),(EntityPlayerMP) player);		
-					Calculator.network.sendTo(new PacketFluxNetworkList(x, y, z, FluxRegistry.getAvailableNetworks(player.getGameProfile().getName(), null)), (EntityPlayerMP) player);
-					player.openGui(Calculator.instance, CalculatorGui.FluxPoint, world, x, y, z);
-				}
-			}
-		}
-		return true;
-	}
+    @Override
+    public TileEntity createNewTileEntity(World var1, int var2) {
+        return new TileEntityFluxPoint();
+    }
 
-	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {
-		return new TileEntityFluxPoint();
-	}
+    @Override
+    public boolean dropStandard(World world, int x, int y, int z) {
+        return false;
+    }
 
-	@Override
-	public boolean dropStandard(World world, int x, int y, int z) {
-		return false;
-	}
+    @Override
+    public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
+        CalculatorHelper.addEnergytoToolTip(stack, player, list);
 
-	@Override
-	public void addSpecialToolTip(ItemStack stack, EntityPlayer player, List list) {
-		CalculatorHelper.addEnergytoToolTip(stack, player, list);
+    }
 
-	}
-	@Override
-	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
-		TileEntity tileentity = world.getTileEntity(x, y, z);
-		if (tileentity != null && tileentity instanceof TileEntityFluxHandler) {
-			TileEntityFluxHandler flux = (TileEntityFluxHandler) world.getTileEntity(x, y, z);
-			flux.updateAdjacentHandlers();
-		}
+    @Override
+    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
+        TileEntity tileentity = world.getTileEntity(x, y, z);
+        if (tileentity != null && tileentity instanceof TileEntityFluxHandler) {
+            TileEntityFluxHandler flux = (TileEntityFluxHandler) world.getTileEntity(x, y, z);
+            flux.updateAdjacentHandlers();
+        }
 
-	}
+    }
 
-	@Override
-	public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
-		list.add("Receives Energy");
-	}	
-	
-	public boolean hasSpecialRenderer() {
-		return true;
-	}
-	
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemstack) {
-		super.onBlockPlacedBy(world, x, y, z, player, itemstack);
-		TileEntity target = world.getTileEntity(x, y, z);
-		if (target != null && target instanceof TileEntityFluxHandler) {
-			TileEntityFluxHandler flux = (TileEntityFluxHandler) target;
-			if (player != null && player instanceof EntityPlayer) {
-				flux.setPlayer((EntityPlayer) player);
-			}
-			flux.updateAdjacentHandlers();
-		}
-	}
+    @Override
+    public void standardInfo(ItemStack stack, EntityPlayer player, List list) {
+        list.add("Receives Energy");
+    }
+
+    public boolean hasSpecialRenderer() {
+        return true;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemstack) {
+        super.onBlockPlacedBy(world, x, y, z, player, itemstack);
+        TileEntity target = world.getTileEntity(x, y, z);
+        if (target != null && target instanceof TileEntityFluxHandler) {
+            TileEntityFluxHandler flux = (TileEntityFluxHandler) target;
+            if (player != null && player instanceof EntityPlayer) {
+                flux.setPlayer((EntityPlayer) player);
+            }
+            flux.updateAdjacentHandlers();
+        }
+    }
 
 }

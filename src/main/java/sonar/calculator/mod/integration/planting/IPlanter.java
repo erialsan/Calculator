@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 
 public interface IPlanter {
 
-	public Block getCropFromStack(ItemStack stack);
+    public Block getCropFromStack(ItemStack stack);
 
-	public int getMetaFromStack(ItemStack stack);
+    public int getMetaFromStack(ItemStack stack);
 }
